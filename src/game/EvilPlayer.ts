@@ -40,10 +40,6 @@ export class EvilPlayer {
       return;
     }
 
-    if (this.sprite.animations.currentAnim.name !== 'IDLE') {
-      this.sprite.animations.play('IDLE');
-    }
-
     this.pathfinder.calculate();
     if (this.calculatingPath) {
       return;
@@ -67,8 +63,10 @@ export class EvilPlayer {
     }
 
     const destination = this.path.shift();
-    this.position.set(destination.x, destination.y);
-    this.moveTo(game, level, this.position);
+    const point = new Point(destination.x, destination.y);
+    if (!point.equals(this.position)) {
+      this.moveTo(game, level, point);
+    }
   }
 
   private isPathUpdateRequired = () => {

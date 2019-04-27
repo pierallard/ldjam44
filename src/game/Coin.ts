@@ -6,6 +6,7 @@ import {Positionable} from "./Positionable";
 
 export class Coin {
   private sprite: Sprite;
+  private shadow: Sprite;
 
   private isMoving = false;
 
@@ -21,6 +22,9 @@ export class Coin {
   isAlive = () => this.sprite.alive;
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
+    this.shadow.anchor.set(0.1, 0.1);
+    group.add(this.shadow);
     this.sprite = game.add.sprite(
       this.position.x * TILE_SIZE,
       this.position.y * TILE_SIZE,
@@ -36,14 +40,11 @@ export class Coin {
     if (this.sprite.alive === false) {
       return;
     }
-
-    const playerPosition = this.player.getPosition();
-
-    // on player collision
-    if (playerPosition.equals(this.position)) {
-      this.sprite.kill();
+    if (this.isMoving) {
       return;
     }
+
+    const playerPosition = this.player.getPosition();
 
     if (Math.random() < 0.03 && Coin.dist(playerPosition, this.position) < 5) {
       const possiblePositions = [
@@ -74,13 +75,21 @@ export class Coin {
       this.sprite.scale.set(-1, 1);
       this.sprite.anchor.set(1, 0);
     }
+    
+    this.position = position;
+
     game.add.tween(this.sprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
     }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
 
+    game.add.tween(this.shadow).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+
     game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
-      this.position = position;
+
       this.isMoving = false;
       this.sprite.position.x = this.position.x * TILE_SIZE;
       this.sprite.position.y = this.position.y * TILE_SIZE;
@@ -122,5 +131,14 @@ export class Coin {
       (playerPosition.x - position.x) * (playerPosition.x - position.x) +
       (playerPosition.y - position.y) * (playerPosition.y - position.y)
     )
+  }
+
+  kill() {
+    this.sprite.kill();
+    this.shadow.kill();
+  }
+
+  stopMoving() {
+    this.isMoving = true;
   }
 }

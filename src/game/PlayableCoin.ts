@@ -11,6 +11,7 @@ export class PlayableCoin {
   private upKey: Phaser.Key;
   private downKey: Phaser.Key;
   private isMoving: boolean;
+  private shadow: Sprite;
 
   constructor(position: Point) {
     this.position = position;
@@ -18,6 +19,9 @@ export class PlayableCoin {
   }
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
+    group.add(this.shadow);
+    this.shadow.anchor.set(0.1, 0.1);
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'coin');
     this.sprite.animations.add('IDLE', [0, 1, 2], Phaser.Timer.SECOND / 100, true);
     this.sprite.animations.add('RUN', [3, 4, 5, 6, 7, 8], Phaser.Timer.SECOND / 50, true);
@@ -73,6 +77,11 @@ export class PlayableCoin {
     this.position.x = position.x;
     this.position.y = position.y;
     game.add.tween(this.sprite).to({
+      x: this.position.x * TILE_SIZE,
+      y: this.position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+
+    game.add.tween(this.shadow).to({
       x: this.position.x * TILE_SIZE,
       y: this.position.y * TILE_SIZE
     }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);

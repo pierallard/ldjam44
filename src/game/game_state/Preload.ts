@@ -22,6 +22,7 @@ export default class Preload extends Phaser.State {
         this.game.load.spritesheet('evil_hero', 'dist/assets/images/evil_hero_all.png', 30, 30);
         this.game.load.spritesheet('normal_coin', 'dist/assets/images/gentil_coin.png', 24, 24);
         this.game.load.spritesheet('coin', 'dist/assets/images/coin.png', 24, 24);
+        this.game.load.image('shadow', 'dist/assets/images/shadow.png');
     }
 
     private loadFonts() {

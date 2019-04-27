@@ -12,7 +12,7 @@ export default class Play extends Phaser.State {
     super();
     this.level = new Level();
     this.player = new Player();
-    this.coins.push(new Coin());
+    this.coins.push(new Coin(this.player));
   }
 
 

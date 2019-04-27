@@ -1,6 +1,7 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
-import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../app";
+import {TILE_SIZE} from "../app";
+import { Level } from "../levels/Level";
 
 export class PlayableCoin {
   private sprite: Sprite;
@@ -83,17 +84,17 @@ export class PlayableCoin {
     }, this)
   }
 
-  private isMovingAllowed(position: Point, level) {
+  private isMovingAllowed(position: Point, level: Level) {
     if (position.x < 0) {
       return false;
     }
-    if (position.x >= LEVEL_WIDTH) {
+    if (position.x >= level.getWidth()) {
       return false;
     }
     if (position.y < 0) {
       return false;
     }
-    if (position.y >= LEVEL_HEIGHT) {
+    if (position.y >= level.getHeight()) {
       return false;
     }
     if (!level.isAllowedForCoin(position)) {

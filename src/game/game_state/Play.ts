@@ -1,7 +1,7 @@
 import {Level} from "../../levels/Level";
 import {Player} from "../Player";
 import { Coin } from "../Coin";
-import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../../app";
+import { TILE_SIZE} from "../../app";
 import {PlayableCoin} from "../PlayableCoin";
 import {EvilPlayer} from "../EvilPlayer";
 import Key = Phaser.Key;
@@ -57,7 +57,7 @@ export default class Play extends Phaser.State {
     this.evilPlayer.create(game, this.evilGroup);
     this.playableCoin.create(game, this.evilGroup);
 
-    game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
+    game.world.setBounds(0, 0, this.level.getWidth() * TILE_SIZE, this.level.getHeight() * TILE_SIZE);
     this.refreshGroups(game);
   }
 

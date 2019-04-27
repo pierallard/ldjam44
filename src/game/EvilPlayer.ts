@@ -37,16 +37,16 @@ export class EvilPlayer {
       case distanceX === 0 && distanceY === 0:
         this.moveTo(game, this.position, level);
         break;
-      case distanceX > 0:
+      case distanceX > 0 && level.isAllowedForPlayer(this.position.right()):
         this.moveTo(game, this.position.right(), level);
         break;
-      case distanceX < 0:
+      case distanceX < 0 && level.isAllowedForPlayer(this.position.left()):
         this.moveTo(game, this.position.left(), level);
         break;
-      case distanceY < 0:
+      case distanceY < 0 && level.isAllowedForPlayer(this.position.up()):
         this.moveTo(game, this.position.up(), level);
         break;
-      case distanceY > 0:
+      case distanceY > 0 && level.isAllowedForPlayer(this.position.down()):
         this.moveTo(game, this.position.down(), level);
         break;
     }

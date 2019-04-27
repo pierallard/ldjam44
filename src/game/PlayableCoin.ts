@@ -12,7 +12,7 @@ export class PlayableCoin {
   private isMoving: boolean;
 
   constructor() {
-    this.position = new Point(3, 8);
+    this.position = new Point(3, 3);
     this.isMoving = false;
   }
 

@@ -5,6 +5,8 @@ import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../../app";
 import {PlayableCoin} from "../PlayableCoin";
 import {EvilPlayer} from "../EvilPlayer";
 import Key = Phaser.Key;
+import Point from "../Point";
+import { CoinCounter } from "../CoinCounter";
 
 export default class Play extends Phaser.State {
   private level: Level;
@@ -15,17 +17,20 @@ export default class Play extends Phaser.State {
   private isCoinMode: boolean = false;
   private normalGroup: Phaser.Group;
   private evilGroup: Phaser.Group;
+  private coinCounter: CoinCounter;
 
   constructor() {
     super();
     this.level = new Level();
     this.player = new Player();
 
-    for (let i = 0; i < 50; i++) {
-      this.coins.push(new Coin(i, this.player, this.coins));
-    }
+    this.coins.push(new Coin(1, new Point(1, 1), this.player, this.coins));
+    this.coins.push(new Coin(1, new Point(0, 1), this.player, this.coins));
+
     this.playableCoin = new PlayableCoin();
     this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());
+
+    this.coinCounter = new CoinCounter(this.coins);
   }
 
 
@@ -40,12 +45,15 @@ export default class Play extends Phaser.State {
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup)
     });
+    this.coinCounter.create(game, this.normalGroup);
 
     this.evilPlayer.create(game, this.evilGroup);
     this.playableCoin.create(game, this.evilGroup);
 
     game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
     this.refreshGroups(game);
+
+
 
     /* Text example */
     /* game.add.bitmapText(100,100, 'font', 'Sample text', 7);*/
@@ -80,6 +88,7 @@ export default class Play extends Phaser.State {
     this.coins.forEach(coin => coin.update(game, this.level));
     this.evilPlayer.update(game, this.level);
     this.playableCoin.update(game);
+    this.coinCounter.update();
   }
 
   private refreshGroups(game: Phaser.Game) {

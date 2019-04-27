@@ -7,18 +7,21 @@ import { Level } from "./Level";
 const MAX_BREAK_TIME_MS = 4000;
 
 export class Coin {
-  public position: Point;
   private sprite: Sprite;
-  private isMoving: boolean;
+
+  private isMoving = false;
   private endOfBreakTime = 0;
 
-  constructor(private id, private player: Player, private coins: Coin[]) {
-    this.position = new Point(
-      Math.ceil(Math.random() * LEVEL_WIDTH),
-      Math.ceil(Math.random() * LEVEL_HEIGHT)
-    );
-    this.isMoving = false;
-  }
+  constructor(
+    private id,
+    private position: Point,
+    private player: Player,
+    private coins: Coin[]
+  ) {}
+
+  getPosition = () => this.position;
+
+  isAlive = () => this.sprite.alive;
 
   create(game: Phaser.Game, group: Phaser.Group) {
     this.sprite = game.add.sprite(
@@ -111,7 +114,7 @@ export class Coin {
       if (coin.id === this.id) {
         continue;
       }
-      if (coin.position.equals(position)) {
+      if (coin.getPosition().equals(position)) {
         return false;
       }
     }

@@ -32,7 +32,9 @@ export class Player {
     this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
     this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+  }
 
+  followCamera(game: Phaser.Game) {
     game.camera.follow(this.sprite);
   }
 

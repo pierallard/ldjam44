@@ -11,7 +11,7 @@ export class Tile {
   }
 
   create(game: Phaser.Game, group: Phaser.Group) {
-    this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground');
+    this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground', Math.ceil(Math.random() * 2));
     group.add(this.sprite);
   }
 

@@ -28,7 +28,6 @@ export default class Play extends Phaser.State {
     this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());
   }
 
-
   public create(game: Phaser.Game) {
     this.normalGroup = game.add.group(null, 'NORMAL');
     this.evilGroup = game.add.group(null, 'EVIL');

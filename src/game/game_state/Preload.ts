@@ -13,8 +13,8 @@ export default class Preload extends Phaser.State {
     }
 
     private loadImages() {
-        this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12)
-        this.game.load.image('basic_ground', 'dist/assets/images/ground/basic.png');
+        this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12);
+        this.game.load.spritesheet('basic_ground', 'dist/assets/images/ground/basic.png', 24, 24);
         this.game.load.image('basic_bloc', 'dist/assets/images/ground/bloc.png');
         this.game.load.spritesheet('normal_hero', 'dist/assets/images/gentil_hero_all.png', 30, 30);
     }

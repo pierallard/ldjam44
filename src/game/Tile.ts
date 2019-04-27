@@ -4,15 +4,19 @@ import {TILE_SIZE} from "../app";
 
 export class Tile {
   protected position: Point;
-  protected sprite: Sprite;
+  protected normalSprite: Sprite;
+  protected evilSprite: Sprite;
 
   constructor(position: Point) {
     this.position = position;
   }
 
-  create(game: Phaser.Game, group: Phaser.Group) {
-    this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground');
-    group.add(this.sprite);
+  create(game: Phaser.Game, normalGroup: Phaser.Group, evilGroup: Phaser.Group) {
+    this.normalSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground');
+    normalGroup.add(this.normalSprite);
+
+    this.evilSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'evil_ground');
+    evilGroup.add(this.evilSprite);
   }
 
   getPosition(): Point {

@@ -89,8 +89,8 @@ export default class Play extends Phaser.State {
     this.player.update(game, this.level);
     this.coins.forEach(coin => coin.update(game, this.level));
     this.evilPlayer.update(game, this.level);
-    this.playableCoin.update(game);
     this.coinCounter.update();
+    this.playableCoin.update(game, this.level);
   }
 
   private refreshGroups(game: Phaser.Game) {

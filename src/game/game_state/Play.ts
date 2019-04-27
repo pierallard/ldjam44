@@ -1,5 +1,6 @@
 import {Level} from "../Level";
 import {Player} from "../Player";
+import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../../app";
 
 export default class Play extends Phaser.State {
   private level: Level;
@@ -15,6 +16,8 @@ export default class Play extends Phaser.State {
   public create(game: Phaser.Game) {
     this.level.create(game);
     this.player.create(game);
+
+    game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
 
     /* Text example */
     /* game.add.bitmapText(100,100, 'font', 'Sample text', 7);*/

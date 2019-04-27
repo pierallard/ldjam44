@@ -46,10 +46,15 @@ export class Player {
   private moveTo(game: Phaser.Game, position: Point) {
     this.isMoving = true;
     this.position = position;
-    this.sprite.position.x = this.position.x * TILE_SIZE;
-    this.sprite.position.y = this.position.y * TILE_SIZE;
+    game.add.tween(this.sprite).to({
+      x: this.position.x * TILE_SIZE,
+      y: this.position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+
     game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
       this.isMoving = false;
+      this.sprite.position.x = this.position.x * TILE_SIZE;
+      this.sprite.position.y = this.position.y * TILE_SIZE;
     }, this)
   }
 }

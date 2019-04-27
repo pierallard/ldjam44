@@ -8,6 +8,7 @@ import { PlayableCoin } from "../PlayableCoin";
 import { Player } from "../Player";
 import Point from "../Point";
 import { Game } from "phaser-ce";
+import {EvilCoin} from "../EvilCoin";
 
 export abstract class Stage extends Phaser.State {
   protected player: Player;
@@ -18,7 +19,7 @@ export abstract class Stage extends Phaser.State {
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
   protected coinCounter: CoinCounter;
-  protected evilCoins: Coin[] = [];
+  protected evilCoins: EvilCoin[] = [];
 
   constructor(private level: Level) {
     super();
@@ -53,7 +54,7 @@ export abstract class Stage extends Phaser.State {
     coinPositions.forEach((pos, i) => {
       this.coins.push(new Coin(i, pos, this.player, this.coins));
       if (i !== 0) {
-        this.evilCoins.push(new Coin(i, pos, this.evilPlayer, this.evilCoins));
+        this.evilCoins.push(new EvilCoin(i, pos, this.evilPlayer, this.evilCoins));
       }
     });
 

@@ -5,17 +5,19 @@ import { Level } from "../levels/Level";
 import {Positionable} from "./Positionable";
 
 export class Coin {
-  private sprite: Sprite;
-  private shadow: Sprite;
-
+  protected sprite: Sprite;
+  protected shadow: Sprite;
+  protected position: Point;
   private isMoving = false;
 
   constructor(
     private id,
-    private position: Point,
+    position,
     private player: Positionable,
     private coins: Coin[]
-  ) {}
+  ) {
+    this.position = position;
+  }
 
   getPosition = () => this.position;
 
@@ -59,11 +61,27 @@ export class Coin {
           return Coin.dist(playerPosition, b) - Coin.dist(playerPosition, a);
         });
         this.moveTo(game, level, sortedPositions[0]);
+
+        return;
+      }
+    }
+
+    if (this.sprite.animations.currentAnim.name !== 'IDLE') {
+      this.sprite.animations.play('IDLE');
+    }
+
+    if (Math.random() < 0.03) {
+      if (this.sprite.scale.x < 0) {
+        this.sprite.scale.set(1, 1);
+        this.sprite.anchor.set(0, 0);
+      } else {
+        this.sprite.scale.set(-1, 1);
+        this.sprite.anchor.set(1, 0);
       }
     }
   }
 
-  private moveTo(game: Phaser.Game, level: Level, position: Point) {
+  protected moveTo(game: Phaser.Game, level: Level, position: Point) {
     if (!this.isMovingAllowed(level, position)) {
       return;
     }

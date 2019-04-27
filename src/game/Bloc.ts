@@ -10,4 +10,8 @@ export class Bloc extends Tile {
   isAllowedForPlayer(): boolean {
     return false;
   }
+
+  isAllowedForCoin(): boolean {
+    return false;
+  }
 }

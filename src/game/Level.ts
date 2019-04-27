@@ -1,17 +1,29 @@
 import {Tile} from "./Tile";
 import Point from "./Point";
 import {LEVEL_HEIGHT, LEVEL_WIDTH} from "../app";
+import {Bloc} from "./Bloc";
 
 export class Level {
   private tiles: Tile[];
 
-
   constructor() {
     this.tiles = [];
 
+    const blocks = [
+      new Point(2, 0),
+      new Point(2,2)
+    ];
+
     for (let y = 0; y < LEVEL_HEIGHT; y++) {
       for (let x = 0; x < LEVEL_WIDTH; x++) {
-        this.tiles.push(new Tile(new Point(x, y)));
+        const position = new Point(x, y);
+        if (blocks.filter((block) => {
+          return block.equals(position);
+        }).length === 0) {
+          this.tiles.push(new Tile(position));
+        } else {
+          this.tiles.push(new Bloc(position));
+        }
       }
     }
   }
@@ -20,5 +32,13 @@ export class Level {
     this.tiles.forEach((tile) => {
       tile.create(game);
     })
+  }
+
+  isAllowedForPlayer(position: Point) {
+    for (let i = 0; i < this.tiles.length; i++) {
+      if (this.tiles[i].getPosition().equals(position)) {
+        return this.tiles[i].isAllowedForPlayer();
+      }
+    }
   }
 }

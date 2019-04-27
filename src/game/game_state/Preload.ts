@@ -15,6 +15,7 @@ export default class Preload extends Phaser.State {
     private loadImages() {
         this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12)
         this.game.load.image('basic_ground', 'dist/assets/images/ground/basic.png');
+        this.game.load.image('basic_bloc', 'dist/assets/images/ground/bloc.png');
     }
 
     private loadFonts() {

@@ -6,7 +6,7 @@ export default class Preload extends Phaser.State {
     }
 
     public create () {
-        this.game.state.start('Play');
+        this.game.state.start('Stage1');
     }
 
     private loadAudio() {

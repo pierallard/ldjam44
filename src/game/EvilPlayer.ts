@@ -1,8 +1,8 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
-import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
+import { TILE_SIZE } from "../app";
 import { PlayableCoin } from "./PlayableCoin";
-import { Level } from "./Level";
+import { Level } from "../levels/Level";
 import { js as EasyStar } from "easystarjs";
 import {Positionable} from "./Positionable";
 
@@ -110,57 +110,17 @@ export class EvilPlayer implements Positionable {
     }, this)
   }
 
-  getPosition() {
-    return this.position;
-  }
-
-  /*
-  private moveTo(game: Phaser.Game, position: Point, level) {
-    if (!this.isMovingAllowed(position, level)) {
-      return;
-    }
-
-    this.isMoving = true;
-    if (this.position.x < position.x) {
-      this.sprite.scale.set(1, 1);
-      this.sprite.anchor.set(0.1, 0.1);
-    } else if (this.position.x > position.x) {
-      this.sprite.scale.set(-1, 1);
-      this.sprite.anchor.set(0.9, 0.1);
-    }
-    game.add.tween(this.sprite).to(
-      {
-        x: position.x * TILE_SIZE,
-        y: position.y * TILE_SIZE
-      },
-      0.3 * Phaser.Timer.SECOND,
-      Phaser.Easing.Default,
-      true
-    );
-
-    game.time.events.add(
-      0.3 * Phaser.Timer.SECOND,
-      () => {
-        this.isMoving = false;
-        this.sprite.position.x = this.position.x * TILE_SIZE;
-        this.sprite.position.y = this.position.y * TILE_SIZE;
-        this.position = position;
-      },
-      this
-    );
-  }*/
-
   private isMovingAllowed(level: Level, position: Point) {
     if (position.x < 0) {
       return false;
     }
-    if (position.x >= LEVEL_WIDTH) {
+    if (position.x >= level.getWidth()) {
       return false;
     }
     if (position.y < 0) {
       return false;
     }
-    if (position.y >= LEVEL_HEIGHT) {
+    if (position.y >= level.getHeight()) {
       return false;
     }
     if (!level.isAllowedForPlayer(position)) {
@@ -168,5 +128,9 @@ export class EvilPlayer implements Positionable {
     }
 
     return true;
+  }
+
+  getPosition() {
+    return this.position;
   }
 }

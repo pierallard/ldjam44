@@ -1,21 +1,20 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
-import { TILE_SIZE } from "../app";
-import { Level } from "../levels/Level";
+import {TILE_SIZE} from "../app";
+import {Level} from "../levels/Level";
 import {Positionable} from "./Positionable";
 
 export class Coin {
   protected sprite: Sprite;
+  private evilSprite: Sprite;
   protected shadow: Sprite;
   protected position: Point;
   private isMoving = false;
 
-  constructor(
-    private id,
-    position,
-    private player: Positionable,
-    private coins: Coin[]
-  ) {
+  constructor(private id,
+              position,
+              private player: Positionable,
+              private coins: Coin[]) {
     this.position = position;
   }
 
@@ -23,19 +22,23 @@ export class Coin {
 
   isAlive = () => this.sprite.alive;
 
-  create(game: Phaser.Game, group: Phaser.Group) {
+  create(game: Phaser.Game, normalGroup: Phaser.Group, evilGroup: Phaser.Group) {
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     this.shadow.anchor.set(0.1, 0.1);
-    group.add(this.shadow);
-    this.sprite = game.add.sprite(
-      this.position.x * TILE_SIZE,
-      this.position.y * TILE_SIZE,
-      "normal_coin"
-    );
-    group.add(this.sprite);
+    normalGroup.add(this.shadow);
+    evilGroup.add(this.shadow);
 
+    this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, "normal_coin");
+    normalGroup.add(this.sprite);
     this.sprite.animations.add('IDLE', [0, 1, 2, 3, 4, 5], Phaser.Timer.SECOND / 70, true);
     this.sprite.animations.play('IDLE');
+
+    this.evilSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, "evil_coin");
+    evilGroup.add(this.evilSprite);
+    this.evilSprite.animations.add('IDLE', [0, 1, 2, 3, 4, 5, 6], Phaser.Timer.SECOND / 70, true);
+    this.evilSprite.animations.add('RUN', [7, 8, 9, 10, 11, 12], Phaser.Timer.SECOND / 70, true);
+    this.evilSprite.animations.add('SCARED', [13, 14], Phaser.Timer.SECOND / 70, true);
+    this.evilSprite.animations.play('IDLE');
   }
 
   update(game: Phaser.Game, level: Level) {
@@ -84,18 +87,28 @@ export class Coin {
     if (!this.isMovingAllowed(level, position)) {
       return;
     }
+    if (!this.position.equals(position) && this.sprite.animations.currentAnim.name !== 'RUN') {
+      this.sprite.animations.play('RUN');
+    }
     this.isMoving = true;
     if (this.position.x < position.x) {
       this.sprite.scale.set(1, 1);
       this.sprite.anchor.set(0, 0);
+      this.evilSprite.scale.set(1, 1);
+      this.evilSprite.anchor.set(0, 0);
     } else if (this.position.x > position.x) {
-      this.sprite.scale.set(-1, 1);
-      this.sprite.anchor.set(1, 0);
+      this.evilSprite.scale.set(-1, 1);
+      this.evilSprite.anchor.set(1, 0);
     }
 
     this.position = position;
 
     game.add.tween(this.sprite).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+
+    game.add.tween(this.evilSprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
     }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
@@ -106,10 +119,11 @@ export class Coin {
     }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
 
     game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
-
       this.isMoving = false;
       this.sprite.position.x = this.position.x * TILE_SIZE;
       this.sprite.position.y = this.position.y * TILE_SIZE;
+      this.evilSprite.position.x = this.position.x * TILE_SIZE;
+      this.evilSprite.position.y = this.position.y * TILE_SIZE;
     }, this)
   }
 
@@ -152,6 +166,7 @@ export class Coin {
 
   kill() {
     this.sprite.kill();
+    this.evilSprite.kill();
     this.shadow.kill();
   }
 
@@ -164,6 +179,6 @@ export class Coin {
   }
 
   protected playScared() {
-
+    this.evilSprite.animations.play('SCARED');
   }
 }

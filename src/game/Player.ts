@@ -4,6 +4,7 @@ import { TILE_SIZE} from "../app";
 import {Level} from "../levels/Level";
 import {Coin} from "./Coin";
 import Game = Phaser.Game;
+import {EvilPlayer} from "./EvilPlayer";
 
 export class Player {
   private sprite: Sprite;
@@ -15,6 +16,7 @@ export class Player {
   private isMoving: boolean;
   private shadow: Sprite;
   private coins: Coin[];
+  private evilPlayer: EvilPlayer;
 
   constructor() {
     this.position = new Point(0, 0);
@@ -69,6 +71,7 @@ export class Player {
   }
 
   private moveTo(game: Phaser.Game, level: Level, position: Point) {
+    this.evilPlayer.moveTo(game, level, position);
     if (!this.isMovingAllowed(level, position)) {
       return;
     }
@@ -145,5 +148,9 @@ export class Player {
 
   setPosition(point: Point) {
     this.position = point;
+  }
+
+  attachEvilPlayer(evilPlayer: EvilPlayer) {
+    this.evilPlayer = evilPlayer;
   }
 }

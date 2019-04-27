@@ -8,7 +8,7 @@ import { PlayableCoin } from "../PlayableCoin";
 import { Player } from "../Player";
 import Point from "../Point";
 import { Game } from "phaser-ce";
-import {EvilCoin} from "../EvilCoin";
+
 
 export abstract class Stage extends Phaser.State {
   protected player: Player;
@@ -19,8 +19,8 @@ export abstract class Stage extends Phaser.State {
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
   protected coinCounter: CoinCounter;
-  protected evilCoins: EvilCoin[] = [];
   private coinPositions: Point[];
+  private isGlitching: boolean = false;
 
   constructor(private level: Level) {
     super();
@@ -52,15 +52,16 @@ export abstract class Stage extends Phaser.State {
       this.player.getPosition()
     );
 
+    this.player.attachEvilPlayer(this.evilPlayer);
+
     this.coinPositions.forEach((pos, i) => {
-      this.coins.push(new Coin(i, pos, this.player, this.coins));
       if (i !== 0) {
-        this.evilCoins.push(new EvilCoin(i, pos, this.evilPlayer, this.evilCoins));
+        this.coins.push(new Coin(i, pos, this.player, this.coins));
       }
     });
 
     this.player.setCoins(this.coins);
-    this.evilPlayer.setCoins(this.evilCoins);
+    this.evilPlayer.setCoins(this.coins);
 
     this.coinCounter = new CoinCounter(this.coins);
   }
@@ -75,18 +76,16 @@ export abstract class Stage extends Phaser.State {
     this.evilPlayer.setPosition(new Point(0, 0));
     this.playableCoin.setPosition(this.coinPositions[0]);
 
-    this.normalGroup = game.add.group(null, "NORMAL");
     this.evilGroup = game.add.group(null, "EVIL");
+    this.normalGroup = game.add.group(null, "NORMAL");
+
     game.add.existing(this.normalGroup);
     game.add.existing(this.evilGroup);
 
     this.level.create(game, this.normalGroup, this.evilGroup);
     this.player.create(game, this.normalGroup);
     this.coins.forEach(coin => {
-      coin.create(game, this.normalGroup);
-    });
-    this.evilCoins.forEach(coin => {
-      coin.create(game, this.evilGroup);
+      coin.create(game, this.normalGroup, this.evilGroup);
     });
     this.coinCounter.create(game, this.normalGroup);
 
@@ -103,6 +102,10 @@ export abstract class Stage extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
+    if (Math.random() < 0.01 && !this.isGlitching) {
+      this.glitch(game);
+    }
+
     const spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     if (spaceKey.justDown) {
       this.isCoinMode = !this.isCoinMode;
@@ -135,14 +138,14 @@ export abstract class Stage extends Phaser.State {
       this.onGameOver();
       return;
     }
-    if (this.areAllCoinsDead(this.evilCoins)) {
+    if (this.areAllCoinsDead(this.coins)) {
       this.onGameWin();
       return;
     }
 
     this.evilPlayer.update(game, this.level);
     this.playableCoin.update(game, this.level);
-    this.evilCoins.forEach(coin => coin.update(game, this.level));
+    this.coins.forEach(coin => coin.update(game, this.level));
   };
 
   private refreshGroups(game: Phaser.Game) {
@@ -165,4 +168,26 @@ export abstract class Stage extends Phaser.State {
     }
     return true;
   };
+
+  private glitch(game: Phaser.Game) {
+    this.isGlitching = true;
+    if (this.isCoinMode) {
+      this.normalGroup.alpha = 1;
+      this.evilGroup.alpha = 0;
+    } else {
+      this.normalGroup.alpha = 0;
+      this.evilGroup.alpha = 1;
+    }
+
+    game.time.events.add(Math.random() * Phaser.Timer.SECOND / 10, () => {
+      this.isGlitching = false;
+      if (this.isCoinMode) {
+        this.normalGroup.alpha = 0;
+        this.evilGroup.alpha = 1;
+      } else {
+        this.normalGroup.alpha = 1;
+        this.evilGroup.alpha = 0;
+      }
+    }, this)
+  }
 }

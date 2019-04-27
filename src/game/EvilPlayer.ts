@@ -100,7 +100,7 @@ export class EvilPlayer implements Positionable {
   };
 
 
-  private moveTo(game: Phaser.Game, level: Level, position: Point) {
+  moveTo(game: Phaser.Game, level: Level, position: Point) {
     if (!this.isMovingAllowed(level, position)) {
       return;
     }

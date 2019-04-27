@@ -4,11 +4,11 @@ import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
 import { PlayableCoin } from "./PlayableCoin";
 import { Level } from "./Level";
 import { js as EasyStar } from "easystarjs";
+import {Positionable} from "./Positionable";
 
 type Path = { x: number; y: number }[];
 
-
-export class EvilPlayer {
+export class EvilPlayer implements Positionable {
   private static SPEED = 0.3 * Phaser.Timer.SECOND;
   private sprite: Sprite;
   private position: Point;
@@ -108,6 +108,10 @@ export class EvilPlayer {
       this.sprite.position.x = this.position.x * TILE_SIZE;
       this.sprite.position.y = this.position.y * TILE_SIZE;
     }, this)
+  }
+
+  getPosition() {
+    return this.position;
   }
 
   /*

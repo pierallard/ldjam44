@@ -4,7 +4,6 @@ import { Coin } from "../Coin";
 import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../../app";
 import {PlayableCoin} from "../PlayableCoin";
 import {EvilPlayer} from "../EvilPlayer";
-import Key = Phaser.Key;
 import Point from "../Point";
 import { CoinCounter } from "../CoinCounter";
 import { js as EasyStar } from 'easystarjs';
@@ -19,26 +18,35 @@ export default class Play extends Phaser.State {
   private normalGroup: Phaser.Group;
   private evilGroup: Phaser.Group;
   private coinCounter: CoinCounter;
+  private evilCoins: Coin[] = [];
 
   constructor() {
     super();
     this.level = new Level();
     this.player = new Player();
 
-    for (let i = 0; i < 8; i++) {
+    let coinPositions = [];
+    while (coinPositions.length < 10) {
       const position = new Point(Math.ceil(Math.random() * LEVEL_WIDTH), Math.ceil(Math.random() * LEVEL_HEIGHT));
       if (this.level.isAllowedForCoin(position)) {
-        this.coins.push(new Coin(i, position, this.player, this.coins));
+        coinPositions.push(position);
       }
     }
 
-    this.playableCoin = new PlayableCoin();
+    this.playableCoin = new PlayableCoin(coinPositions[0]);
 
     const pathfinder = new EasyStar();
     pathfinder.setAcceptableTiles([0]);
     pathfinder.setGrid(this.level.getGrid());
 
     this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.player.getPosition());
+
+    coinPositions.forEach((pos, i) => {
+      this.coins.push(new Coin(i, pos, this.player, this.coins));
+      if (i !== 0) {
+        this.evilCoins.push(new Coin(i, pos, this.evilPlayer, this.evilCoins));
+      }
+    });
 
     this.coinCounter = new CoinCounter(this.coins);
   }
@@ -54,6 +62,9 @@ export default class Play extends Phaser.State {
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup)
     });
+    this.evilCoins.forEach(coin => {
+      coin.create(game, this.evilGroup)
+    });
     this.coinCounter.create(game, this.normalGroup);
 
     this.evilPlayer.create(game, this.evilGroup);
@@ -61,7 +72,6 @@ export default class Play extends Phaser.State {
 
     game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
     this.refreshGroups(game);
-
 
 
     /* Text example */
@@ -97,11 +107,13 @@ export default class Play extends Phaser.State {
     }
 
     this.player.update(game, this.level);
-    this.coins.forEach(coin => coin.update(game, this.level));
     this.coinCounter.update();
     if (this.isCoinMode) {
         this.evilPlayer.update(game, this.level);
         this.playableCoin.update(game, this.level);
+        this.evilCoins.forEach(coin => coin.update(game, this.level));
+    } else {
+      this.coins.forEach(coin => coin.update(game, this.level));
     }
   }
 

@@ -11,8 +11,8 @@ export class PlayableCoin {
   private downKey: Phaser.Key;
   private isMoving: boolean;
 
-  constructor() {
-    this.position = new Point(3, 3);
+  constructor(position: Point) {
+    this.position = position;
     this.isMoving = false;
   }
 

@@ -3,6 +3,7 @@ import Point from "./Point";
 import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
 import { Player } from "./Player";
 import { Level } from "./Level";
+import {Positionable} from "./Positionable";
 
 export class Coin {
   private sprite: Sprite;
@@ -12,7 +13,7 @@ export class Coin {
   constructor(
     private id,
     private position: Point,
-    private player: Player,
+    private player: Positionable,
     private coins: Coin[]
   ) {}
 

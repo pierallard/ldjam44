@@ -7,6 +7,9 @@ import Play from "./game/game_state/Play";
 export const SCALE = 5;
 const GAME_WIDTH = 1200;
 const GAME_HEIGHT = 800;
+export const TILE_SIZE = 24;
+export const LEVEL_WIDTH = 20;
+export const LEVEL_HEIGHT = 20;
 
 class SimpleGame extends Phaser.Game {
     constructor() {

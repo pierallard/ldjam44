@@ -45,6 +45,7 @@ export default class Play extends Phaser.State {
     this.playableCoin.create(game, this.evilGroup);
 
     game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
+    this.refreshGroups(game);
 
     /* Text example */
     /* game.add.bitmapText(100,100, 'font', 'Sample text', 7);*/
@@ -71,7 +72,8 @@ export default class Play extends Phaser.State {
 
     const spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     if (spaceKey.justDown) {
-      this.switchGroups();
+      this.isCoinMode = !this.isCoinMode;
+      this.refreshGroups(game);
     }
 
     this.player.update(game, this.level);
@@ -80,14 +82,15 @@ export default class Play extends Phaser.State {
     this.playableCoin.update(game);
   }
 
-  private switchGroups() {
-    this.isCoinMode = !this.isCoinMode;
+  private refreshGroups(game: Phaser.Game) {
     if (this.isCoinMode) {
       this.normalGroup.alpha = 0;
       this.evilGroup.alpha = 1;
+      this.playableCoin.followCamera(game);
     } else {
       this.normalGroup.alpha = 1;
       this.evilGroup.alpha = 0;
+      this.player.followCamera(game);
     }
   }
 }

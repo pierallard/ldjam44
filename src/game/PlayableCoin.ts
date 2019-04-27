@@ -24,8 +24,10 @@ export class PlayableCoin {
     this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
     this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+  }
 
-    //game.camera.follow(this.sprite);
+  followCamera(game: Phaser.Game) {
+    game.camera.follow(this.sprite);
   }
 
   update(game: Phaser.Game) {

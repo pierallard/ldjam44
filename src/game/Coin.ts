@@ -7,12 +7,12 @@ import { Level } from "./Level";
 const MAX_BREAK_TIME_MS = 4000;
 
 export class Coin {
+  public position: Point;
   private sprite: Sprite;
-  private position: Point;
   private isMoving: boolean;
   private endOfBreakTime = 0;
 
-  constructor(private player: Player) {
+  constructor(private id, private player: Player, private coins: Coin[]) {
     this.position = new Point(
       Math.ceil(Math.random() * LEVEL_WIDTH),
       Math.ceil(Math.random() * LEVEL_HEIGHT)
@@ -80,7 +80,8 @@ export class Coin {
       0.6 * Phaser.Timer.SECOND,
       () => {
         this.isMoving = false;
-        this.endOfBreakTime = game.time.time + Math.random() * MAX_BREAK_TIME_MS;
+        this.endOfBreakTime =
+          game.time.time + Math.random() * MAX_BREAK_TIME_MS;
         this.sprite.position.x = this.position.x * TILE_SIZE;
         this.sprite.position.y = this.position.y * TILE_SIZE;
       },
@@ -104,6 +105,15 @@ export class Coin {
 
     if (!level.isAllowedForCoin(position)) {
       return false;
+    }
+
+    for (const coin of this.coins) {
+      if (coin.id === this.id) {
+        continue;
+      }
+      if (coin.position.equals(position)) {
+        return false;
+      }
     }
 
     return true;

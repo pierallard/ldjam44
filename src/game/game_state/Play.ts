@@ -22,7 +22,7 @@ export default class Play extends Phaser.State {
     this.player = new Player();
 
     for (let i = 0; i < 50; i++) {
-      this.coins.push(new Coin(this.player));
+      this.coins.push(new Coin(i, this.player, this.coins));
     }
     this.playableCoin = new PlayableCoin();
     this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());
@@ -34,7 +34,7 @@ export default class Play extends Phaser.State {
     game.add.existing(this.normalGroup);
     game.add.existing(this.evilGroup);
 
-    this.level.create(game, this.normalGroup);
+    this.level.create(game, this.normalGroup, this.evilGroup);
     this.player.create(game, this.normalGroup);
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup)

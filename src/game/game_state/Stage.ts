@@ -22,8 +22,6 @@ export abstract class Stage extends Phaser.State {
   constructor(private level: Level) {
     super();
 
-    this.player = new Player();
-
     let coinPositions = [];
     let tries = 1000;
     while (coinPositions.length < 10 && tries > 0) {
@@ -43,6 +41,8 @@ export abstract class Stage extends Phaser.State {
     pathfinder.setAcceptableTiles([0]);
     pathfinder.setGrid(this.level.getGrid());
 
+    this.player = new Player();
+
     this.evilPlayer = new EvilPlayer(
       pathfinder,
       this.playableCoin,
@@ -55,6 +55,8 @@ export abstract class Stage extends Phaser.State {
         this.evilCoins.push(new Coin(i, pos, this.evilPlayer, this.evilCoins));
       }
     });
+
+    this.player.setCoins(this.coins);
 
     this.coinCounter = new CoinCounter(this.coins);
   }

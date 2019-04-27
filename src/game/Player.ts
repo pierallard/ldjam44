@@ -2,6 +2,8 @@ import Sprite = Phaser.Sprite;
 import Point from "./Point";
 import { TILE_SIZE} from "../app";
 import {Level} from "../levels/Level";
+import {Coin} from "./Coin";
+import Game = Phaser.Game;
 
 export class Player {
   private sprite: Sprite;
@@ -12,6 +14,7 @@ export class Player {
   private downKey: Phaser.Key;
   private isMoving: boolean;
   private shadow: Sprite;
+  private coins: Coin[];
 
   constructor() {
     this.position = new Point(0, 0);
@@ -29,6 +32,7 @@ export class Player {
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
     this.sprite.animations.add('RUN', [4, 5, 6, 7], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('KILL', [8, 9, 10, 11, 12], Phaser.Timer.SECOND / 100, false);
     this.sprite.animations.play('IDLE');
     this.sprite.anchor.set(0.1, 0.1);
 
@@ -47,7 +51,11 @@ export class Player {
       return;
     }
 
-    if (this.leftKey.isDown) {
+    const coin = this.canKill();
+
+    if (coin) {
+      this.kill(game, coin);
+    } else if (this.leftKey.isDown) {
       this.moveTo(game, level, this.position.left());
     } else if (this.rightKey.isDown) {
       this.moveTo(game, level, this.position.right());
@@ -108,5 +116,30 @@ export class Player {
     }
 
     return true;
+  }
+
+  setCoins(coins: Coin[]) {
+    this.coins = coins;
+  }
+
+  private canKill(): Coin {
+    const coins = this.coins.filter((coin) => {
+      return coin.getPosition().equals(this.position) && coin.isAlive();
+    });
+    if (coins.length) {
+      return coins[0];
+    }
+    return null;
+  }
+
+  private kill(game: Game, coin: Coin) {
+    this.isMoving = true;
+    this.sprite.animations.play('KILL');
+    coin.stopMoving();
+    game.time.events.add(0.5 * Phaser.Timer.SECOND, () => {
+      this.sprite.animations.play('IDLE');
+      this.isMoving = false;
+      coin.kill();
+    }, this)
   }
 }

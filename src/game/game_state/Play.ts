@@ -7,6 +7,7 @@ import {EvilPlayer} from "../EvilPlayer";
 import Key = Phaser.Key;
 import Point from "../Point";
 import { CoinCounter } from "../CoinCounter";
+import { js as EasyStar } from 'easystarjs';
 
 export default class Play extends Phaser.State {
   private level: Level;
@@ -29,7 +30,12 @@ export default class Play extends Phaser.State {
     }
 
     this.playableCoin = new PlayableCoin();
-    this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());
+
+    const pathfinder = new EasyStar();
+    pathfinder.setAcceptableTiles([0]);
+    pathfinder.setGrid(this.level.getGrid());
+
+    this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.player.getPosition());
 
     this.coinCounter = new CoinCounter(this.coins);
   }

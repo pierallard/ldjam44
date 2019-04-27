@@ -1,8 +1,11 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
 import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
-import {PlayableCoin} from "./PlayableCoin";
-import {Level} from "./Level";
+import { PlayableCoin } from "./PlayableCoin";
+import { Level } from "./Level";
+import { js as EasyStar } from "easystarjs";
+
+type Path = { x: number; y: number }[];
 
 export class EvilPlayer {
   private sprite: Sprite;
@@ -10,7 +13,10 @@ export class EvilPlayer {
   private isMoving: boolean;
   private target: PlayableCoin;
 
-  constructor(target: PlayableCoin, position) {
+  private path: Path = null;
+  private calculatingPath = false;
+
+  constructor(private pathfinder: EasyStar, target: PlayableCoin, position) {
     this.position = position;
     this.isMoving = false;
     this.target = target;
@@ -20,8 +26,8 @@ export class EvilPlayer {
     this.sprite = game.add.sprite(
       this.position.x * TILE_SIZE,
       this.position.y * TILE_SIZE,
-        "chips",
-        32
+      "chips",
+      32
     );
     group.add(this.sprite);
   }
@@ -31,26 +37,46 @@ export class EvilPlayer {
       return;
     }
 
-    let distanceX = this.target.position.x - this.position.x;
-    let distanceY = this.target.position.y - this.position.y;
-    switch (true) {
-      case distanceX === 0 && distanceY === 0:
-        this.moveTo(game, this.position, level);
-        break;
-      case distanceX > 0 && level.isAllowedForPlayer(this.position.right()):
-        this.moveTo(game, this.position.right(), level);
-        break;
-      case distanceX < 0 && level.isAllowedForPlayer(this.position.left()):
-        this.moveTo(game, this.position.left(), level);
-        break;
-      case distanceY < 0 && level.isAllowedForPlayer(this.position.up()):
-        this.moveTo(game, this.position.up(), level);
-        break;
-      case distanceY > 0 && level.isAllowedForPlayer(this.position.down()):
-        this.moveTo(game, this.position.down(), level);
-        break;
+    this.pathfinder.calculate();
+    if (this.calculatingPath) {
+      return;
     }
+    if (this.isPathUpdateRequired()) {
+      this.pathfinder.findPath(
+        this.position.x,
+        this.position.y,
+        this.target.position.x,
+        this.target.position.y,
+        path => {
+          this.calculatingPath = false;
+          this.path = path;
+          if (this.path !== null) {
+            path.shift(); // drop the first element (it's the current position).
+          }
+        }
+      );
+      this.calculatingPath = true;
+      return;
+    }
+
+    const destination = this.path.shift();
+    this.position.set(destination.x, destination.y);
+    this.moveTo(game, this.position, level);
   }
+
+  private isPathUpdateRequired = () => {
+    if (this.calculatingPath) {
+      return false;
+    }
+    if (!this.path || this.path.length === 0) {
+      return true;
+    }
+    if (this.position.equals(this.target.position)) {
+      return true;
+    }
+
+    return false;
+  };
 
   private moveTo(game: Phaser.Game, position: Point, level) {
     if (!this.isMovingAllowed(position, level)) {

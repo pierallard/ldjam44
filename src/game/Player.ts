@@ -1,6 +1,7 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
 import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../app";
+import {Level} from "./Level";
 
 export class Player {
   private sprite: Sprite;
@@ -27,24 +28,24 @@ export class Player {
     game.camera.follow(this.sprite);
   }
 
-  update(game: Phaser.Game) {
+  update(game: Phaser.Game, level: Level) {
     if (this.isMoving) {
       return;
     }
 
     if (this.leftKey.isDown) {
-      this.moveTo(game, this.position.left());
+      this.moveTo(game, level, this.position.left());
     } else if (this.rightKey.isDown) {
-      this.moveTo(game, this.position.right());
+      this.moveTo(game, level, this.position.right());
     } else if (this.upKey.isDown) {
-      this.moveTo(game, this.position.up());
+      this.moveTo(game, level, this.position.up());
     } else if (this.downKey.isDown) {
-      this.moveTo(game, this.position.down());
+      this.moveTo(game, level, this.position.down());
     }
   }
 
-  private moveTo(game: Phaser.Game, position: Point) {
-    if (!this.isMovingAllowed(position)) {
+  private moveTo(game: Phaser.Game, level: Level, position: Point) {
+    if (!this.isMovingAllowed(level, position)) {
       return;
     }
     this.isMoving = true;
@@ -61,7 +62,7 @@ export class Player {
     }, this)
   }
 
-  private isMovingAllowed(position: Point) {
+  private isMovingAllowed(level: Level, position: Point) {
     if (position.x < 0) {
       return false;
     }
@@ -72,6 +73,9 @@ export class Player {
       return false;
     }
     if (position.y >= LEVEL_HEIGHT) {
+      return false;
+    }
+    if (!level.isAllowedForPlayer(position)) {
       return false;
     }
 

@@ -41,6 +41,6 @@ export default class Play extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
-    this.player.update(game);
+    this.player.update(game, this.level);
   }
 }

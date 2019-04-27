@@ -4,7 +4,9 @@ import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
 import {PlayableCoin} from "./PlayableCoin";
 import {Level} from "./Level";
 
+
 export class EvilPlayer {
+  private static SPEED = 0.3 * Phaser.Timer.SECOND;
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
@@ -72,9 +74,9 @@ export class EvilPlayer {
     game.add.tween(this.sprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+    }, EvilPlayer.SPEED, Phaser.Easing.Default, true);
 
-    game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
+    game.time.events.add(EvilPlayer.SPEED, () => {
       this.position = position;
       this.isMoving = false;
       this.sprite.position.x = this.position.x * TILE_SIZE;

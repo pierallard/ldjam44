@@ -17,12 +17,13 @@ export class Coin {
     this.isMoving = false;
   }
 
-  create(game: Phaser.Game) {
+  create(game: Phaser.Game, group: Phaser.Group) {
     this.sprite = game.add.sprite(
       this.position.x * TILE_SIZE,
       this.position.y * TILE_SIZE,
       "chips"
     );
+    group.add(this.sprite);
   }
 
   update(game: Phaser.Game, level: Level) {

@@ -10,8 +10,9 @@ export class Tile {
     this.position = position;
   }
 
-  create(game: Phaser.Game) {
+  create(game: Phaser.Game, group: Phaser.Group) {
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground');
+    group.add(this.sprite);
   }
 
   getPosition(): Point {

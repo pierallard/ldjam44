@@ -19,8 +19,9 @@ export class Player {
 
   getPosition = () => this.position;
 
-  create(game: Phaser.Game) {
+  create(game: Phaser.Game, group: Phaser.Group) {
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'normal_hero');
+    group.add(this.sprite);
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
     this.sprite.animations.add('RUN', [4, 5, 6, 7], Phaser.Timer.SECOND / 100, true);

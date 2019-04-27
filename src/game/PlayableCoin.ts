@@ -16,15 +16,16 @@ export class PlayableCoin {
     this.isMoving = false;
   }
 
-  create(game: Phaser.Game) {
+  create(game: Phaser.Game, group: Phaser.Group) {
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'chips', 36);
+    group.add(this.sprite);
 
     this.leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
     this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
     this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 
-    game.camera.follow(this.sprite);
+    //game.camera.follow(this.sprite);
   }
 
   update(game: Phaser.Game) {

@@ -16,13 +16,14 @@ export class EvilPlayer {
     this.target = target;
   }
 
-  create(game: Phaser.Game) {
+  create(game: Phaser.Game, group: Phaser.Group) {
     this.sprite = game.add.sprite(
       this.position.x * TILE_SIZE,
       this.position.y * TILE_SIZE,
         "chips",
         32
     );
+    group.add(this.sprite);
   }
 
   update(game: Phaser.Game, level: Level) {
@@ -33,7 +34,8 @@ export class EvilPlayer {
     let distanceX = this.target.position.x - this.position.x;
     let distanceY = this.target.position.y - this.position.y;
     switch (true) {
-      case distanceX === 0:
+      case distanceX === 0 && distanceY === 0:
+        this.moveTo(game, this.position, level);
         break;
       case distanceX > 0:
         this.moveTo(game, this.position.right(), level);
@@ -48,12 +50,6 @@ export class EvilPlayer {
         this.moveTo(game, this.position.down(), level);
         break;
     }
-
-    let horizontalMovement = this.target.position.x > this.position.x ? 'right' : 'left';
-    this.moveTo(game, this.target.position[horizontalMovement](), level);
-
-    let verticalMovement = this.target.position.y > this.position.y ? 'down' : 'up';
-    this.moveTo(game, this.target.position[verticalMovement](), level);
   }
 
   private moveTo(game: Phaser.Game, position: Point, level) {

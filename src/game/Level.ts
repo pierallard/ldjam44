@@ -28,9 +28,9 @@ export class Level {
     }
   }
 
-  create(game: Phaser.Game) {
+  create(game: Phaser.Game, group: Phaser.Group) {
     this.tiles.forEach((tile) => {
-      tile.create(game);
+      tile.create(game, group);
     })
   }
 

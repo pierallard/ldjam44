@@ -75,7 +75,7 @@ export class Coin {
       this.sprite.scale.set(-1, 1);
       this.sprite.anchor.set(1, 0);
     }
-    
+
     this.position = position;
 
     game.add.tween(this.sprite).to({

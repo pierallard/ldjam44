@@ -5,6 +5,8 @@ import { PlayableCoin } from "./PlayableCoin";
 import { Level } from "../levels/Level";
 import { js as EasyStar } from "easystarjs";
 import {Positionable} from "./Positionable";
+import {Coin} from "./Coin";
+import Game = Phaser.Game;
 
 type Path = { x: number; y: number }[];
 
@@ -15,6 +17,7 @@ export class EvilPlayer implements Positionable {
   private isMoving: boolean;
   private target: PlayableCoin;
   private shadow: Sprite;
+  private coins: Coin[];
 
   private path: Path = null;
   private calculatingPath = false;
@@ -33,7 +36,9 @@ export class EvilPlayer implements Positionable {
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'evil_hero');
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
-    this.sprite.animations.add('RUN', [4, 5, 6, 7], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('RUN', [4, 5, 6, 7, 8, 9], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], Phaser.Timer.SECOND / 100, true);
+    //this.sprite.animations.add('KILL2', [15, 16, 17], Phaser.Timer.SECOND / 100, false);
     this.sprite.animations.play('IDLE');
     this.sprite.anchor.set(0.1, 0.1);
 
@@ -42,6 +47,12 @@ export class EvilPlayer implements Positionable {
 
   update(game: Phaser.Game, level: Level) {
     if (this.isMoving) {
+      return;
+    }
+
+    const coin = this.canKill();
+    if (coin) {
+      this.kill(game, coin);
       return;
     }
 
@@ -142,5 +153,36 @@ export class EvilPlayer implements Positionable {
 
   getPosition() {
     return this.position;
+  }
+
+  setCoins(coins: Coin[]) {
+    this.coins = coins;
+  }
+
+  private canKill(): Coin {
+    const coins = this.coins.filter((coin) => {
+      return coin.getPosition().equals(this.position) && coin.isAlive();
+    });
+    if (coins.length) {
+      return coins[0];
+    }
+    return null;
+  }
+
+  private kill(game: Game, coin: Coin) {
+    this.isMoving = true;
+    const animations = [
+      'KILL1'
+    ];
+    const anim = animations[Math.floor(Math.random() * animations.length)];
+    const length = Math.floor(Math.random() * 3);
+
+    this.sprite.animations.play(anim);
+    coin.stopMoving();
+    game.time.events.add(Phaser.Timer.SECOND * length, () => {
+      this.sprite.animations.play('IDLE');
+      this.isMoving = false;
+      coin.kill();
+    }, this)
   }
 }

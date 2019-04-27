@@ -58,6 +58,7 @@ export abstract class Stage extends Phaser.State {
     });
 
     this.player.setCoins(this.coins);
+    this.evilPlayer.setCoins(this.evilCoins);
 
     this.coinCounter = new CoinCounter(this.coins);
   }

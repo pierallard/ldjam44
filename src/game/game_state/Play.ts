@@ -25,8 +25,11 @@ export default class Play extends Phaser.State {
     this.level = new Level();
     this.player = new Player();
 
-    for (let i = 0; i < 5; i++) {
-      this.coins.push(new Coin(i, new Point(Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3)), this.player, this.coins));
+    for (let i = 0; i < 8; i++) {
+      const position = new Point(Math.ceil(Math.random() * LEVEL_WIDTH), Math.ceil(Math.random() * LEVEL_HEIGHT));
+      if (this.level.isAllowedForCoin(position)) {
+        this.coins.push(new Coin(i, position, this.player, this.coins));
+      }
     }
 
     this.playableCoin = new PlayableCoin();

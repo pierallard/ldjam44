@@ -4,13 +4,10 @@ import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
 import { Player } from "./Player";
 import { Level } from "./Level";
 
-const MAX_BREAK_TIME_MS = 4000;
-
 export class Coin {
   private sprite: Sprite;
 
   private isMoving = false;
-  private endOfBreakTime = 0;
 
   constructor(
     private id,
@@ -48,19 +45,20 @@ export class Coin {
       return;
     }
 
-    if (this.isMoving || this.endOfBreakTime > game.time.time) {
-      return;
-    }
+    if (Math.random() < 0.03 && Coin.dist(playerPosition, this.position) < 5) {
+      const possiblePositions = [
+        this.position, this.position.left(), this.position.right(), this.position.up(), this.position.down()
+      ];
+      const availablePositions = possiblePositions.filter((position) => {
+        return this.isMovingAllowed(level, position);
+      });
 
-    const direction = Math.ceil(Math.random() * 4);
-    if (direction === 1) {
-      this.moveTo(game, level, this.position.left());
-    } else if (direction === 2) {
-      this.moveTo(game, level, this.position.right());
-    } else if (direction === 3) {
-      this.moveTo(game, level, this.position.up());
-    } else if (direction === 4) {
-      this.moveTo(game, level, this.position.down());
+      if (availablePositions.length) {
+        const sortedPositions = availablePositions.sort((a, b) => {
+          return Coin.dist(playerPosition, b) - Coin.dist(playerPosition, a);
+        });
+        this.moveTo(game, level, sortedPositions[0]);
+      }
     }
   }
 
@@ -68,31 +66,25 @@ export class Coin {
     if (!this.isMovingAllowed(level, position)) {
       return;
     }
-
     this.isMoving = true;
-    this.position = position;
+    if (this.position.x < position.x) {
+      this.sprite.scale.set(1, 1);
+      this.sprite.anchor.set(0, 0);
+    } else if (this.position.x > position.x) {
+      this.sprite.scale.set(-1, 1);
+      this.sprite.anchor.set(1, 0);
+    }
+    game.add.tween(this.sprite).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
 
-    game.add.tween(this.sprite).to(
-      {
-        x: this.position.x * TILE_SIZE,
-        y: this.position.y * TILE_SIZE
-      },
-      0.6 * Phaser.Timer.SECOND,
-      Phaser.Easing.Default,
-      true
-    );
-
-    game.time.events.add(
-      0.6 * Phaser.Timer.SECOND,
-      () => {
-        this.isMoving = false;
-        this.endOfBreakTime =
-          game.time.time + Math.random() * MAX_BREAK_TIME_MS;
-        this.sprite.position.x = this.position.x * TILE_SIZE;
-        this.sprite.position.y = this.position.y * TILE_SIZE;
-      },
-      this
-    );
+    game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
+      this.position = position;
+      this.isMoving = false;
+      this.sprite.position.x = this.position.x * TILE_SIZE;
+      this.sprite.position.y = this.position.y * TILE_SIZE;
+    }, this)
   }
 
   private isMovingAllowed(level: Level, position: Point) {
@@ -123,5 +115,12 @@ export class Coin {
     }
 
     return true;
+  }
+
+  private static dist(playerPosition: Point, position: Point) {
+    return Math.sqrt(
+      (playerPosition.x - position.x) * (playerPosition.x - position.x) +
+      (playerPosition.y - position.y) * (playerPosition.y - position.y)
+    )
   }
 }

@@ -3,6 +3,7 @@
 import Boot from "./game/game_state/Boot";
 import Preload from "./game/game_state/Preload";
 import Stage1 from "./game/game_state/Stage1";
+import Stage2 from "./game/game_state/Stage2";
 
 export const SCALE = 5;
 const GAME_WIDTH = 1200;
@@ -26,6 +27,7 @@ class SimpleGame extends Phaser.Game {
         this.state.add('Boot', Boot);
         this.state.add('Preload', Preload);
         this.state.add('Stage1', Stage1);
+        this.state.add('Stage2', Stage2);
         this.state.start('Boot');
     }
 }

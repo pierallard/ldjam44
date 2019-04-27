@@ -63,7 +63,8 @@ export abstract class Stage extends Phaser.State {
     this.coinCounter = new CoinCounter(this.coins);
   }
 
-  abstract onStageEnd();
+  protected onGameWin = () => {};
+  protected onGameOver = () => {};
 
   public create(game: Phaser.Game) {
     this.normalGroup = game.add.group(null, "NORMAL");
@@ -122,9 +123,12 @@ export abstract class Stage extends Phaser.State {
   };
 
   updateEvilMode = (game: Game) => {
+    if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
+      this.onGameOver();
+      return;
+    }
     if (this.areAllCoinsDead(this.evilCoins)) {
-      this.onStageEnd();
-
+      this.onGameWin();
       return;
     }
 

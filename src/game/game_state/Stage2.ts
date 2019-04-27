@@ -5,6 +5,4 @@ export default class Stage2 extends Stage {
   constructor() {
     super(new Level2());
   }
-
-  onStageEnd = () => {}
 }

@@ -1,21 +1,27 @@
 import {Level} from "../Level";
 import {Player} from "../Player";
+import { Coin } from "../Coin";
 import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../../app";
 
 export default class Play extends Phaser.State {
   private level: Level;
   private player: Player;
+  private coins: Coin[] = [];
 
   constructor() {
     super();
     this.level = new Level();
     this.player = new Player();
+    this.coins.push(new Coin(this.player));
   }
 
 
   public create(game: Phaser.Game) {
     this.level.create(game);
     this.player.create(game);
+    this.coins.forEach(coin => {
+      coin.create(game)
+    })
 
     game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
 
@@ -42,5 +48,6 @@ export default class Play extends Phaser.State {
 
   public update(game: Phaser.Game) {
     this.player.update(game, this.level);
+    this.coins.forEach(coin => coin.update(game));
   }
 }

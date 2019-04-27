@@ -18,6 +18,7 @@ export abstract class Stage extends Phaser.State {
   protected isCoinMode: boolean = false;
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
+  protected interfaceGroup: Phaser.Group;
   protected coinCounter: CoinCounter;
   private coinPositions: Point[];
   private isGlitching: boolean = false;
@@ -56,7 +57,7 @@ export abstract class Stage extends Phaser.State {
 
     this.coinPositions.forEach((pos, i) => {
       if (i !== 0) {
-        this.coins.push(new Coin(i, pos, this.player, this.coins));
+        this.coins.push(new Coin(i, pos, this.evilPlayer, this.coins));
       }
     });
 
@@ -78,16 +79,18 @@ export abstract class Stage extends Phaser.State {
 
     this.evilGroup = game.add.group(null, "EVIL");
     this.normalGroup = game.add.group(null, "NORMAL");
+    this.interfaceGroup = game.add.group(null, 'INTERFACE');
 
     game.add.existing(this.normalGroup);
     game.add.existing(this.evilGroup);
+    game.add.existing(this.interfaceGroup);
 
     this.level.create(game, this.normalGroup, this.evilGroup);
     this.player.create(game, this.normalGroup);
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup, this.evilGroup);
     });
-    this.coinCounter.create(game, this.normalGroup);
+    this.coinCounter.create(game, this.interfaceGroup);
 
     this.evilPlayer.create(game, this.evilGroup);
     this.playableCoin.create(game, this.evilGroup);
@@ -123,8 +126,12 @@ export abstract class Stage extends Phaser.State {
 
   updateGoodMode = (game: Game) => {
     if (this.areAllCoinsDead(this.coins)) {
+      this.coins.forEach((coin) => {
+        coin.ressussite();
+      });
       this.isCoinMode = true;
       this.refreshGroups(game);
+      this.evilPlayer.setPosition(new Point(0, 0));
 
       return;
     }

@@ -11,16 +11,21 @@ export class Coin {
   protected position: Point;
   private isMoving = false;
 
+  private isDead: boolean;
+
   constructor(private id,
               position,
               private player: Positionable,
               private coins: Coin[]) {
     this.position = position;
+    this.isDead = false;
   }
 
   getPosition = () => this.position;
 
-  isAlive = () => this.sprite.alive;
+  isAlive() {
+    return !this.isDead;
+  }
 
   create(game: Phaser.Game, normalGroup: Phaser.Group, evilGroup: Phaser.Group) {
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
@@ -42,7 +47,7 @@ export class Coin {
   }
 
   update(game: Phaser.Game, level: Level) {
-    if (this.sprite.alive === false) {
+    if (this.isDead) {
       return;
     }
     if (this.isMoving) {
@@ -165,9 +170,10 @@ export class Coin {
   }
 
   kill() {
-    this.sprite.kill();
-    this.evilSprite.kill();
-    this.shadow.kill();
+    this.sprite.alpha = 0;
+    this.evilSprite.alpha = 0;
+    this.shadow.alpha = 0;
+    this.isDead = true;
   }
 
   stopMoving() {
@@ -180,5 +186,12 @@ export class Coin {
 
   protected playScared() {
     this.evilSprite.animations.play('SCARED');
+  }
+
+  ressussite() {
+    this.sprite.alpha = 1;
+    this.evilSprite.alpha = 1;
+    this.shadow.alpha = 1;
+    this.isDead = false;
   }
 }

@@ -5,7 +5,7 @@ import Preload from "./game/game_state/Preload";
 import Stage1 from "./game/game_state/Stage1";
 import Stage2 from "./game/game_state/Stage2";
 
-export const SCALE = 5;
+export const SCALE = 4;
 const GAME_WIDTH = 1200;
 const GAME_HEIGHT = 800;
 export const TILE_SIZE = 24;

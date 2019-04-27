@@ -142,4 +142,8 @@ export class Player {
       coin.kill();
     }, this)
   }
+
+  setPosition(point: Point) {
+    this.position = point;
+  }
 }

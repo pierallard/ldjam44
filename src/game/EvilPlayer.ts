@@ -185,4 +185,8 @@ export class EvilPlayer implements Positionable {
       coin.kill();
     }, this)
   }
+
+  setPosition(point: Point) {
+    this.position = point;
+  }
 }

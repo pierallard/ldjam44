@@ -9,5 +9,7 @@ export default class Stage1 extends Stage {
 
   onGameWin = () => this.game.state.start("Stage2");
 
-  onGameOver = () => this.game.state.restart();
+  onGameOver() {
+    this.game.state.restart(true);
+  }
 }

@@ -5,7 +5,7 @@ import { Level } from "../levels/Level";
 
 export class PlayableCoin {
   private sprite: Sprite;
-  public readonly position : Point;
+  public position : Point;
   private leftKey: Phaser.Key;
   private rightKey: Phaser.Key;
   private upKey: Phaser.Key;
@@ -74,8 +74,7 @@ export class PlayableCoin {
       this.sprite.anchor.set(0, 0);
     }
     this.isMoving = true;
-    this.position.x = position.x;
-    this.position.y = position.y;
+    this.position = position;
     game.add.tween(this.sprite).to({
       x: this.position.x * TILE_SIZE,
       y: this.position.y * TILE_SIZE
@@ -111,5 +110,9 @@ export class PlayableCoin {
     }
 
     return true;
+  }
+
+  setPosition(point: Point) {
+    this.position = point;
   }
 }

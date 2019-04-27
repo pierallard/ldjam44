@@ -20,24 +20,25 @@ export abstract class Stage extends Phaser.State {
   protected evilGroup: Phaser.Group;
   protected coinCounter: CoinCounter;
   protected evilCoins: EvilCoin[] = [];
+  private coinPositions: Point[];
 
   constructor(private level: Level) {
     super();
 
-    let coinPositions = [];
+    this.coinPositions = [];
     let tries = 1000;
-    while (coinPositions.length < 10 && tries > 0) {
+    while (this.coinPositions.length < 10 && tries > 0) {
       const position = new Point(
         Math.ceil(Math.random() * this.level.getWidth()),
         Math.ceil(Math.random() * this.level.getHeight())
       );
       if (this.level.isAllowedForCoin(position)) {
-        coinPositions.push(position);
+        this.coinPositions.push(position);
       }
       tries--;
     }
 
-    this.playableCoin = new PlayableCoin(coinPositions[0]);
+    this.playableCoin = new PlayableCoin(new Point(this.coinPositions[0].x, this.coinPositions[0].y));
 
     const pathfinder = new EasyStar();
     pathfinder.setAcceptableTiles([0]);
@@ -51,7 +52,7 @@ export abstract class Stage extends Phaser.State {
       this.player.getPosition()
     );
 
-    coinPositions.forEach((pos, i) => {
+    this.coinPositions.forEach((pos, i) => {
       this.coins.push(new Coin(i, pos, this.player, this.coins));
       if (i !== 0) {
         this.evilCoins.push(new EvilCoin(i, pos, this.evilPlayer, this.evilCoins));
@@ -65,9 +66,15 @@ export abstract class Stage extends Phaser.State {
   }
 
   protected onGameWin = () => {};
-  protected onGameOver = () => {};
+  protected onGameOver() {
+
+  };
 
   public create(game: Phaser.Game) {
+    this.player.setPosition(new Point(0, 0));
+    this.evilPlayer.setPosition(new Point(0, 0));
+    this.playableCoin.setPosition(this.coinPositions[0]);
+
     this.normalGroup = game.add.group(null, "NORMAL");
     this.evilGroup = game.add.group(null, "EVIL");
     game.add.existing(this.normalGroup);
@@ -96,6 +103,7 @@ export abstract class Stage extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
+    console.log(this.coinPositions[0]);
     const spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     if (spaceKey.justDown) {
       this.isCoinMode = !this.isCoinMode;

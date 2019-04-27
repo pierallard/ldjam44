@@ -33,14 +33,13 @@ export default class Play extends Phaser.State {
     this.coinCounter = new CoinCounter(this.coins);
   }
 
-
   public create(game: Phaser.Game) {
     this.normalGroup = game.add.group(null, 'NORMAL');
     this.evilGroup = game.add.group(null, 'EVIL');
     game.add.existing(this.normalGroup);
     game.add.existing(this.evilGroup);
 
-    this.level.create(game, this.normalGroup);
+    this.level.create(game, this.normalGroup, this.evilGroup);
     this.player.create(game, this.normalGroup);
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup)

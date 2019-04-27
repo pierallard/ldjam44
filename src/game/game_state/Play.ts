@@ -24,8 +24,9 @@ export default class Play extends Phaser.State {
     this.level = new Level();
     this.player = new Player();
 
-    this.coins.push(new Coin(1, new Point(1, 1), this.player, this.coins));
-    this.coins.push(new Coin(1, new Point(0, 1), this.player, this.coins));
+    for (let i = 0; i < 5; i++) {
+      this.coins.push(new Coin(i, new Point(Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3)), this.player, this.coins));
+    }
 
     this.playableCoin = new PlayableCoin();
     this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());

@@ -9,7 +9,7 @@ import { CoinCounter } from "../CoinCounter";
 import { js as EasyStar } from 'easystarjs';
 import { Level1 } from "../../levels/Level1";
 
-export default class Play extends Phaser.State {
+export default class Stage1 extends Phaser.State {
   private level: Level;
   private player: Player;
   private coins: Coin[] = [];
@@ -30,15 +30,10 @@ export default class Play extends Phaser.State {
     let tries = 1000;
     while (coinPositions.length < 10 && tries > 0) {
       const position = new Point(Math.ceil(Math.random() * this.level.getWidth()), Math.ceil(Math.random() * this.level.getHeight()));
-      console.log(position);
       if (this.level.isAllowedForCoin(position)) {
         coinPositions.push(position);
       }
       tries--;
-    }
-
-    if (coinPositions.length === 0) {
-      throw "shit";
     }
 
     this.playableCoin = new PlayableCoin(coinPositions[0]);

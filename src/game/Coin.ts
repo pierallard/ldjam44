@@ -4,10 +4,13 @@ import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
 import { Player } from "./Player";
 import { Level } from "./Level";
 
+const MAX_BREAK_TIME_MS = 4000;
+
 export class Coin {
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
+  private endOfBreakTime = 0;
 
   constructor(private player: Player) {
     this.position = new Point(
@@ -31,20 +34,18 @@ export class Coin {
     }
 
     const playerPosition = this.player.getPosition();
+
+    // on player collision
     if (playerPosition.equals(this.position)) {
       this.sprite.kill();
-
       return;
     }
 
-    if (this.isMoving) {
+    if (this.isMoving || this.endOfBreakTime > game.time.time) {
       return;
     }
-
-    // const direction = playerPosition.remove(this.position).normalize()
 
     const direction = Math.ceil(Math.random() * 4);
-
     if (direction === 1) {
       this.moveTo(game, level, this.position.left());
     } else if (direction === 2) {
@@ -78,6 +79,7 @@ export class Coin {
       0.6 * Phaser.Timer.SECOND,
       () => {
         this.isMoving = false;
+        this.endOfBreakTime = game.time.time + Math.random() * MAX_BREAK_TIME_MS;
         this.sprite.position.x = this.position.x * TILE_SIZE;
         this.sprite.position.y = this.position.y * TILE_SIZE;
       },

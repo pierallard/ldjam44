@@ -101,7 +101,7 @@ export class Coin {
       return false;
     }
 
-    if (!level.isAllowedForPlayer(position)) {
+    if (!level.isAllowedForCoin(position)) {
       return false;
     }
 

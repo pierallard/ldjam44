@@ -41,4 +41,12 @@ export class Level {
       }
     }
   }
+
+  isAllowedForCoin(position: Point) {
+    for (let i = 0; i < this.tiles.length; i++) {
+      if (this.tiles[i].getPosition().equals(position)) {
+        return this.tiles[i].isAllowedForCoin();
+      }
+    }
+  }
 }

@@ -21,4 +21,8 @@ export class Tile {
   isAllowedForPlayer(): boolean {
     return true;
   }
+
+  isAllowedForCoin(): boolean {
+    return true;
+  }
 }

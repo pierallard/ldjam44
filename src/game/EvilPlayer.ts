@@ -42,16 +42,16 @@ export class EvilPlayer {
           this.sprite.animations.play('IDLE');
         }
         break;
-      case distanceX > 0:
+      case distanceX > 0 && level.isAllowedForPlayer(this.position.right()):
         this.moveTo(game, level, this.position.right());
         break;
-      case distanceX < 0:
+      case distanceX < 0 && level.isAllowedForPlayer(this.position.left()):
         this.moveTo(game, level, this.position.left());
         break;
-      case distanceY < 0:
+      case distanceY < 0 && level.isAllowedForPlayer(this.position.up()):
         this.moveTo(game, level, this.position.up());
         break;
-      case distanceY > 0:
+      case distanceY > 0 && level.isAllowedForPlayer(this.position.down()):
         this.moveTo(game, level, this.position.down());
         break;
     }

@@ -12,7 +12,7 @@ export class PlayableCoin {
   private isMoving: boolean;
 
   constructor() {
-    this.position = new Point(3, 8);
+    this.position = new Point(3, 3);
     this.isMoving = false;
   }
 
@@ -30,24 +30,24 @@ export class PlayableCoin {
     game.camera.follow(this.sprite);
   }
 
-  update(game: Phaser.Game) {
+  update(game: Phaser.Game, level) {
     if (this.isMoving) {
       return;
     }
 
     if (this.leftKey.isDown) {
-      this.moveTo(game, this.position.left());
+      this.moveTo(game, this.position.left(), level);
     } else if (this.rightKey.isDown) {
-      this.moveTo(game, this.position.right());
+      this.moveTo(game, this.position.right(), level);
     } else if (this.upKey.isDown) {
-      this.moveTo(game, this.position.up());
+      this.moveTo(game, this.position.up(), level);
     } else if (this.downKey.isDown) {
-      this.moveTo(game, this.position.down());
+      this.moveTo(game, this.position.down(), level);
     }
   }
 
-  private moveTo(game: Phaser.Game, position: Point) {
-    if (!this.isMovingAllowed(position)) {
+  private moveTo(game: Phaser.Game, position: Point, level) {
+    if (!this.isMovingAllowed(position, level)) {
       return;
     }
     this.isMoving = true;
@@ -65,7 +65,7 @@ export class PlayableCoin {
     }, this)
   }
 
-  private isMovingAllowed(position: Point) {
+  private isMovingAllowed(position: Point, level) {
     if (position.x < 0) {
       return false;
     }
@@ -76,6 +76,9 @@ export class PlayableCoin {
       return false;
     }
     if (position.y >= LEVEL_HEIGHT) {
+      return false;
+    }
+    if (!level.isAllowedForCoin(position)) {
       return false;
     }
 

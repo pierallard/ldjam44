@@ -25,5 +25,6 @@ export default class Preload extends Phaser.State {
 
     private loadFonts() {
         this.game.load.bitmapFont('font', 'dist/assets/fonts/font.png', 'dist/assets/fonts/font.xml');
+        this.game.load.bitmapFont('Carrier Command', 'dist/assets/fonts/carrier_command.png', 'dist/assets/fonts/carrier_command.xml');
     }
 }

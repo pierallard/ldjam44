@@ -6,6 +6,7 @@ import {Positionable} from "./Positionable";
 
 export class Coin {
   private sprite: Sprite;
+  private shadow: Sprite;
 
   private isMoving = false;
 
@@ -21,6 +22,9 @@ export class Coin {
   isAlive = () => this.sprite.alive;
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
+    this.shadow.anchor.set(0.1, 0.1);
+    group.add(this.shadow);
     this.sprite = game.add.sprite(
       this.position.x * TILE_SIZE,
       this.position.y * TILE_SIZE,
@@ -42,6 +46,7 @@ export class Coin {
     // on player collision
     if (playerPosition.equals(this.position)) {
       this.sprite.kill();
+      this.shadow.kill();
       return;
     }
 
@@ -75,6 +80,11 @@ export class Coin {
       this.sprite.anchor.set(1, 0);
     }
     game.add.tween(this.sprite).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+
+    game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
     }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);

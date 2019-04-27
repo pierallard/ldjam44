@@ -14,6 +14,7 @@ export class EvilPlayer implements Positionable {
   private position: Point;
   private isMoving: boolean;
   private target: PlayableCoin;
+  private shadow: Sprite;
 
   private path: Path = null;
   private calculatingPath = false;
@@ -25,6 +26,10 @@ export class EvilPlayer implements Positionable {
   }
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
+    group.add(this.shadow);
+    this.shadow.anchor.set(0.1, 0.1);
+
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'evil_hero');
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
@@ -98,6 +103,11 @@ export class EvilPlayer implements Positionable {
     }
     this.sprite.animations.play('RUN');
     game.add.tween(this.sprite).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, EvilPlayer.SPEED, Phaser.Easing.Default, true);
+
+    game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
     }, EvilPlayer.SPEED, Phaser.Easing.Default, true);

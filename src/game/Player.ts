@@ -11,6 +11,7 @@ export class Player {
   private upKey: Phaser.Key;
   private downKey: Phaser.Key;
   private isMoving: boolean;
+  private shadow: Sprite;
 
   constructor() {
     this.position = new Point(0, 0);
@@ -20,6 +21,9 @@ export class Player {
   getPosition = () => this.position;
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
+    group.add(this.shadow);
+    this.shadow.anchor.set(0.1, 0.1);
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'normal_hero');
     group.add(this.sprite);
 
@@ -70,6 +74,10 @@ export class Player {
     }
     this.sprite.animations.play('RUN');
     game.add.tween(this.sprite).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+    game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
     }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);

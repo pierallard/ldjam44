@@ -22,7 +22,7 @@ export default class Play extends Phaser.State {
     this.player = new Player();
 
     for (let i = 0; i < 50; i++) {
-      this.coins.push(new Coin(this.player));
+      this.coins.push(new Coin(i, this.player, this.coins));
     }
     this.playableCoin = new PlayableCoin();
     this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());

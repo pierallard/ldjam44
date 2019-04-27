@@ -27,9 +27,12 @@ export class Coin {
     this.sprite = game.add.sprite(
       this.position.x * TILE_SIZE,
       this.position.y * TILE_SIZE,
-      "chips"
+      "normal_coin"
     );
     group.add(this.sprite);
+
+    this.sprite.animations.add('IDLE', [0, 1, 2, 3, 4, 5], Phaser.Timer.SECOND / 70, true);
+    this.sprite.animations.play('IDLE');
   }
 
   update(game: Phaser.Game, level: Level) {

@@ -7,7 +7,9 @@ import { js as EasyStar } from "easystarjs";
 
 type Path = { x: number; y: number }[];
 
+
 export class EvilPlayer {
+  private static SPEED = 0.3 * Phaser.Timer.SECOND;
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
@@ -23,18 +25,23 @@ export class EvilPlayer {
   }
 
   create(game: Phaser.Game, group: Phaser.Group) {
-    this.sprite = game.add.sprite(
-      this.position.x * TILE_SIZE,
-      this.position.y * TILE_SIZE,
-      "chips",
-      32
-    );
+    this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'evil_hero');
+
+    this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
+    this.sprite.animations.add('RUN', [4, 5, 6, 7], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.play('IDLE');
+    this.sprite.anchor.set(0.1, 0.1);
+
     group.add(this.sprite);
   }
 
   update(game: Phaser.Game, level: Level) {
     if (this.isMoving) {
       return;
+    }
+
+    if (this.sprite.animations.currentAnim.name !== 'IDLE') {
+      this.sprite.animations.play('IDLE');
     }
 
     this.pathfinder.calculate();
@@ -61,7 +68,7 @@ export class EvilPlayer {
 
     const destination = this.path.shift();
     this.position.set(destination.x, destination.y);
-    this.moveTo(game, this.position, level);
+    this.moveTo(game, level, this.position);
   }
 
   private isPathUpdateRequired = () => {
@@ -78,18 +85,51 @@ export class EvilPlayer {
     return false;
   };
 
+
+  private moveTo(game: Phaser.Game, level: Level, position: Point) {
+    if (!this.isMovingAllowed(level, position)) {
+      return;
+    }
+    this.isMoving = true;
+    if (this.position.x < position.x) {
+      this.sprite.scale.set(1, 1);
+      this.sprite.anchor.set(0.1, 0.1);
+    } else if (this.position.x > position.x) {
+      this.sprite.scale.set(-1, 1);
+      this.sprite.anchor.set(0.9, 0.1);
+    }
+    this.sprite.animations.play('RUN');
+    game.add.tween(this.sprite).to({
+      x: position.x * TILE_SIZE,
+      y: position.y * TILE_SIZE
+    }, EvilPlayer.SPEED, Phaser.Easing.Default, true);
+
+    game.time.events.add(EvilPlayer.SPEED, () => {
+      this.position = position;
+      this.isMoving = false;
+      this.sprite.position.x = this.position.x * TILE_SIZE;
+      this.sprite.position.y = this.position.y * TILE_SIZE;
+    }, this)
+  }
+
+  /*
   private moveTo(game: Phaser.Game, position: Point, level) {
     if (!this.isMovingAllowed(position, level)) {
       return;
     }
 
     this.isMoving = true;
-    this.position = position;
-
+    if (this.position.x < position.x) {
+      this.sprite.scale.set(1, 1);
+      this.sprite.anchor.set(0.1, 0.1);
+    } else if (this.position.x > position.x) {
+      this.sprite.scale.set(-1, 1);
+      this.sprite.anchor.set(0.9, 0.1);
+    }
     game.add.tween(this.sprite).to(
       {
-        x: this.position.x * TILE_SIZE,
-        y: this.position.y * TILE_SIZE
+        x: position.x * TILE_SIZE,
+        y: position.y * TILE_SIZE
       },
       0.3 * Phaser.Timer.SECOND,
       Phaser.Easing.Default,
@@ -102,12 +142,13 @@ export class EvilPlayer {
         this.isMoving = false;
         this.sprite.position.x = this.position.x * TILE_SIZE;
         this.sprite.position.y = this.position.y * TILE_SIZE;
+        this.position = position;
       },
       this
     );
-  }
+  }*/
 
-  private isMovingAllowed(position: Point, level) {
+  private isMovingAllowed(level: Level, position: Point) {
     if (position.x < 0) {
       return false;
     }

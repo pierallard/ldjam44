@@ -7,9 +7,13 @@ export class Coin {
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
+  private isAlive = true;
 
   constructor(private player: Player) {
-    this.position = new Point(0, 0);
+    this.position = new Point(
+      Math.ceil(Math.random() * LEVEL_WIDTH),
+      Math.ceil(Math.random() * LEVEL_HEIGHT)
+    );
     this.isMoving = false;
   }
 
@@ -26,8 +30,14 @@ export class Coin {
       return;
     }
 
-    const direction = Math.ceil(Math.random() * 4);
+    if (this.player.getPosition().equals(this.position)) {
+      this.sprite.kill();
+      this.isAlive = false;
 
+      return;
+    }
+
+    const direction = Math.ceil(Math.random() * 4);
     switch (direction) {
       case 1:
         this.moveTo(game, this.position.left());

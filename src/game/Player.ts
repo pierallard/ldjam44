@@ -16,6 +16,8 @@ export class Player {
     this.isMoving = false;
   }
 
+  getPosition = () => this.position;
+
   create(game: Phaser.Game) {
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'chips');
 

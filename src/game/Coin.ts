@@ -46,9 +46,8 @@ export class Coin {
       return;
     }
 
-    const playerPosition = this.player.getPosition();
-
-    if (Math.random() < 0.03 && Coin.dist(playerPosition, this.position) < 5) {
+    if (Math.random() < 0.03 && this.playerIsClose()) {
+      this.playScared();
       const possiblePositions = [
         this.position, this.position.left(), this.position.right(), this.position.up(), this.position.down()
       ];
@@ -56,27 +55,27 @@ export class Coin {
         return this.isMovingAllowed(level, position);
       });
 
+      const playerPosition = this.player.getPosition();
       if (availablePositions.length) {
         const sortedPositions = availablePositions.sort((a, b) => {
           return Coin.dist(playerPosition, b) - Coin.dist(playerPosition, a);
         });
         this.moveTo(game, level, sortedPositions[0]);
 
-        return;
       }
-    }
-
-    if (this.sprite.animations.currentAnim.name !== 'IDLE') {
-      this.sprite.animations.play('IDLE');
-    }
-
-    if (Math.random() < 0.03) {
-      if (this.sprite.scale.x < 0) {
-        this.sprite.scale.set(1, 1);
-        this.sprite.anchor.set(0, 0);
-      } else {
-        this.sprite.scale.set(-1, 1);
-        this.sprite.anchor.set(1, 0);
+      return;
+    } else {
+      if (Math.random() < 0.03) {
+        if (this.sprite.scale.x < 0) {
+          this.sprite.scale.set(1, 1);
+          this.sprite.anchor.set(0, 0);
+        } else {
+          this.sprite.scale.set(-1, 1);
+          this.sprite.anchor.set(1, 0);
+        }
+      }
+      if (this.sprite.animations.currentAnim.name !== 'IDLE') {
+        this.sprite.animations.play('IDLE');
       }
     }
   }
@@ -158,5 +157,13 @@ export class Coin {
 
   stopMoving() {
     this.isMoving = true;
+  }
+
+  private playerIsClose() {
+    return Coin.dist(this.player.getPosition(), this.position) < 5
+  }
+
+  protected playScared() {
+
   }
 }

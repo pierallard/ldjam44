@@ -175,7 +175,7 @@ export class EvilPlayer implements Positionable {
       'KILL1'
     ];
     const anim = animations[Math.floor(Math.random() * animations.length)];
-    const length = Math.floor(Math.random() * 3);
+    const length = Math.ceil(Math.random() * 3);
 
     this.sprite.animations.play(anim);
     coin.stopMoving();

@@ -23,7 +23,7 @@ export class Level1 extends Level {
     }
 
     this.width = 10;
-    this.height = 5;
+    this.height = 6;
   }
 
   getGrid = () => [
@@ -31,6 +31,7 @@ export class Level1 extends Level {
     [0, 1, 0, 1, 0, 1, 1, 1, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 1, 1, 0],
     [0, 1, 0, 1, 0, 1, 0, 1, 0, 0],
-    [0, 0, 0, 1, 0, 1, 0, 0, 0, 0]
+    [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ];
 }

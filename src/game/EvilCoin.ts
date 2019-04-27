@@ -13,6 +13,7 @@ export class EvilCoin extends Coin {
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3, 4, 5, 6], Phaser.Timer.SECOND / 70, true);
     this.sprite.animations.add('RUN', [7, 8, 9, 10, 11, 12], Phaser.Timer.SECOND / 70, true);
+    this.sprite.animations.add('SCARED', [13, 14], Phaser.Timer.SECOND / 70, true);
     this.sprite.animations.play('IDLE');
   }
 
@@ -22,5 +23,9 @@ export class EvilCoin extends Coin {
     }
 
     super.moveTo(game, level, position);
+  }
+
+  protected playScared() {
+    this.sprite.animations.play('SCARED');
   }
 }

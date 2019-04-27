@@ -103,7 +103,6 @@ export abstract class Stage extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
-    console.log(this.coinPositions[0]);
     const spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     if (spaceKey.justDown) {
       this.isCoinMode = !this.isCoinMode;

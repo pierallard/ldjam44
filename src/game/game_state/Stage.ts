@@ -7,6 +7,7 @@ import { EvilPlayer } from "../EvilPlayer";
 import { PlayableCoin } from "../PlayableCoin";
 import { Player } from "../Player";
 import Point from "../Point";
+import { Game } from "phaser-ce";
 
 export abstract class Stage extends Phaser.State {
   protected player: Player;
@@ -61,6 +62,8 @@ export abstract class Stage extends Phaser.State {
     this.coinCounter = new CoinCounter(this.coins);
   }
 
+  abstract onStageEnd();
+
   public create(game: Phaser.Game) {
     this.normalGroup = game.add.group(null, "NORMAL");
     this.evilGroup = game.add.group(null, "EVIL");
@@ -95,24 +98,39 @@ export abstract class Stage extends Phaser.State {
       this.isCoinMode = !this.isCoinMode;
       this.refreshGroups(game);
     }
-    if (
-      false === this.isCoinMode &&
-      true === this.areAllCoinsDead(this.coins)
-    ) {
+
+    if (this.isCoinMode) {
+      this.updateEvilMode(game);
+    } else {
+      this.updateGoodMode(game);
+    }
+
+    this.coinCounter.update();
+  }
+
+  updateGoodMode = (game: Game) => {
+    if (this.areAllCoinsDead(this.coins)) {
       this.isCoinMode = true;
       this.refreshGroups(game);
+
+      return;
     }
 
     this.player.update(game, this.level);
-    this.coinCounter.update();
-    if (this.isCoinMode) {
-      this.evilPlayer.update(game, this.level);
-      this.playableCoin.update(game, this.level);
-      this.evilCoins.forEach(coin => coin.update(game, this.level));
-    } else {
-      this.coins.forEach(coin => coin.update(game, this.level));
+    this.coins.forEach(coin => coin.update(game, this.level));
+  };
+
+  updateEvilMode = (game: Game) => {
+    if (this.areAllCoinsDead(this.evilCoins)) {
+      this.onStageEnd();
+
+      return;
     }
-  }
+
+    this.evilPlayer.update(game, this.level);
+    this.playableCoin.update(game, this.level);
+    this.evilCoins.forEach(coin => coin.update(game, this.level));
+  };
 
   private refreshGroups(game: Phaser.Game) {
     if (this.isCoinMode) {
@@ -133,5 +151,5 @@ export abstract class Stage extends Phaser.State {
       }
     }
     return true;
-  }
+  };
 }

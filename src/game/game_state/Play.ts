@@ -12,7 +12,10 @@ export default class Play extends Phaser.State {
     super();
     this.level = new Level();
     this.player = new Player();
-    this.coins.push(new Coin(this.player));
+
+    for (let i = 0; i < 50; i++) {
+      this.coins.push(new Coin(this.player));
+    }
   }
 
 
@@ -48,6 +51,6 @@ export default class Play extends Phaser.State {
 
   public update(game: Phaser.Game) {
     this.player.update(game, this.level);
-    this.coins.forEach(coin => coin.update(game));
+    this.coins.forEach(coin => coin.update(game, this.level));
   }
 }

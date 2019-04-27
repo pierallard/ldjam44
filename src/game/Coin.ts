@@ -2,12 +2,12 @@ import Sprite = Phaser.Sprite;
 import Point from "./Point";
 import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
 import { Player } from "./Player";
+import { Level } from "./Level";
 
 export class Coin {
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
-  private isAlive = true;
 
   constructor(private player: Player) {
     this.position = new Point(
@@ -25,37 +25,39 @@ export class Coin {
     );
   }
 
-  update(game: Phaser.Game) {
+  update(game: Phaser.Game, level: Level) {
+    if (this.sprite.alive === false) {
+      return;
+    }
+
+    const playerPosition = this.player.getPosition();
+    if (playerPosition.equals(this.position)) {
+      this.sprite.kill();
+
+      return;
+    }
+
     if (this.isMoving) {
       return;
     }
 
-    if (this.player.getPosition().equals(this.position)) {
-      this.sprite.kill();
-      this.isAlive = false;
-
-      return;
-    }
+    // const direction = playerPosition.remove(this.position).normalize()
 
     const direction = Math.ceil(Math.random() * 4);
-    switch (direction) {
-      case 1:
-        this.moveTo(game, this.position.left());
-        break;
-      case 2:
-        this.moveTo(game, this.position.right());
-        break;
-      case 3:
-        this.moveTo(game, this.position.up());
-        break;
-      case 4:
-        this.moveTo(game, this.position.down());
-        break;
+
+    if (direction === 1) {
+      this.moveTo(game, level, this.position.left());
+    } else if (direction === 2) {
+      this.moveTo(game, level, this.position.right());
+    } else if (direction === 3) {
+      this.moveTo(game, level, this.position.up());
+    } else if (direction === 4) {
+      this.moveTo(game, level, this.position.down());
     }
   }
 
-  private moveTo(game: Phaser.Game, position: Point) {
-    if (!this.isMovingAllowed(position)) {
+  private moveTo(game: Phaser.Game, level: Level, position: Point) {
+    if (!this.isMovingAllowed(level, position)) {
       return;
     }
 
@@ -67,13 +69,13 @@ export class Coin {
         x: this.position.x * TILE_SIZE,
         y: this.position.y * TILE_SIZE
       },
-      0.3 * Phaser.Timer.SECOND,
+      0.6 * Phaser.Timer.SECOND,
       Phaser.Easing.Default,
       true
     );
 
     game.time.events.add(
-      0.3 * Phaser.Timer.SECOND,
+      0.6 * Phaser.Timer.SECOND,
       () => {
         this.isMoving = false;
         this.sprite.position.x = this.position.x * TILE_SIZE;
@@ -83,7 +85,7 @@ export class Coin {
     );
   }
 
-  private isMovingAllowed(position: Point) {
+  private isMovingAllowed(level: Level, position: Point) {
     if (position.x < 0) {
       return false;
     }
@@ -94,6 +96,10 @@ export class Coin {
       return false;
     }
     if (position.y >= LEVEL_HEIGHT) {
+      return false;
+    }
+
+    if (!level.isAllowedForPlayer(position)) {
       return false;
     }
 

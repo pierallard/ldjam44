@@ -50,4 +50,20 @@ export default class Point extends PIXI.Point {
 
     throw "direction is null!"
   }
+
+  divideScalar = (s: number) => {
+    if(s === 0) {
+        this.x = 0;
+        this.y = 0;
+    } else {
+        var invScalar = 1 / s;
+        this.x *= invScalar;
+        this.y *= invScalar;
+    }
+    return this;
+  }
+
+  length = () => Math.sqrt(this.x * this.x + this.y * this.y);
+
+  normalize = () => this.divideScalar(this.length());
 }

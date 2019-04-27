@@ -1,8 +1,8 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
-import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
+import { TILE_SIZE } from "../app";
 import { Player } from "./Player";
-import { Level } from "./Level";
+import { Level } from "../levels/Level";
 
 const MAX_BREAK_TIME_MS = 4000;
 
@@ -99,13 +99,13 @@ export class Coin {
     if (position.x < 0) {
       return false;
     }
-    if (position.x >= LEVEL_WIDTH) {
+    if (position.x >= level.getWidth()) {
       return false;
     }
     if (position.y < 0) {
       return false;
     }
-    if (position.y >= LEVEL_HEIGHT) {
+    if (position.y >= level.getHeight()) {
       return false;
     }
 

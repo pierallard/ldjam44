@@ -8,8 +8,6 @@ export const SCALE = 5;
 const GAME_WIDTH = 1200;
 const GAME_HEIGHT = 800;
 export const TILE_SIZE = 24;
-export const LEVEL_WIDTH = 10;
-export const LEVEL_HEIGHT = 5;
 
 class SimpleGame extends Phaser.Game {
     constructor() {

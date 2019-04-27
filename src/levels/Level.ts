@@ -1,24 +1,32 @@
-import { Tile } from "./Tile";
-import Point from "./Point";
-import { LEVEL_HEIGHT, LEVEL_WIDTH } from "../app";
-import { Bloc } from "./Bloc";
+import { Bloc } from "../game/Bloc";
+import Point from "../game/Point";
+import { Tile } from "../game/Tile";
 
-export class Level {
-  private tiles: Tile[];
-  private grid: number[][] = [
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-  ];
+export abstract class Level {
+  private tiles: Tile[] = [];
 
-  constructor() {
-    this.tiles = [];
+  private width: number;
+  private height: number;
 
-    for (let y = 0; y < this.grid.length; y++) {
-      for (let x = 0; x < this.grid[y].length; x++) {
-        switch (this.grid[y][x]) {
+  getGrid: () => number[][];
+
+  getWidth = () => this.width;
+
+  getHeight = () => this.height;
+
+  create(
+    game: Phaser.Game,
+    normalGroup: Phaser.Group,
+    evilGroup: Phaser.Group
+  ) {
+    const grid = this.getGrid();
+
+    this.width = this.getGrid()[0].length;
+    this.height = this.getGrid().length;
+
+    for (let y = 0; y < grid.length; y++) {
+      for (let x = 0; x < grid[y].length; x++) {
+        switch (grid[y][x]) {
           case 0:
             this.tiles.push(new Tile(new Point(x, y)));
             break;
@@ -28,15 +36,7 @@ export class Level {
         }
       }
     }
-  }
 
-  getGrid = () => this.grid;
-
-  create(
-    game: Phaser.Game,
-    normalGroup: Phaser.Group,
-    evilGroup: Phaser.Group
-  ) {
     this.tiles.forEach(tile => {
       tile.create(game, normalGroup, evilGroup);
     });

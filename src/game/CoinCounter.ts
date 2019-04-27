@@ -7,7 +7,7 @@ export class CoinCounter {
   constructor(private coins: Coin[]) {}
 
   create = (game: Game, group: Group) => {
-    this.text = game.add.bitmapText(game.width - 40, 5, "font", "", 7, group);
+    this.text = game.add.bitmapText(game.width - 60, 5, "Carrier Command", "", 7, group);
     this.text.fixedToCamera = true;
   };
 
@@ -18,6 +18,7 @@ export class CoinCounter {
             coinAliveCount++;
         }
     }
-    this.text.text = coinAliveCount.toString() + " coins";
+    this.text.setText(coinAliveCount + " coins");
+    this.text.updateText();
   };
 }

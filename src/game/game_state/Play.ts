@@ -1,12 +1,14 @@
-import {Level} from "../Level";
+import {Level} from "../../levels/Level";
 import {Player} from "../Player";
 import { Coin } from "../Coin";
-import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../../app";
+import { TILE_SIZE} from "../../app";
 import {PlayableCoin} from "../PlayableCoin";
 import {EvilPlayer} from "../EvilPlayer";
 import Key = Phaser.Key;
 import Point from "../Point";
 import { CoinCounter } from "../CoinCounter";
+import { js as EasyStar } from 'easystarjs';
+import { Level1 } from "../../levels/Level1";
 
 export default class Play extends Phaser.State {
   private level: Level;
@@ -21,7 +23,7 @@ export default class Play extends Phaser.State {
 
   constructor() {
     super();
-    this.level = new Level();
+    this.level = new Level1();
     this.player = new Player();
 
     for (let i = 0; i < 5; i++) {
@@ -29,7 +31,12 @@ export default class Play extends Phaser.State {
     }
 
     this.playableCoin = new PlayableCoin();
-    this.evilPlayer = new EvilPlayer(this.playableCoin, this.player.getPosition());
+
+    const pathfinder = new EasyStar();
+    pathfinder.setAcceptableTiles([0]);
+    pathfinder.setGrid(this.level.getGrid());
+
+    this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.player.getPosition());
 
     this.coinCounter = new CoinCounter(this.coins);
   }
@@ -50,30 +57,8 @@ export default class Play extends Phaser.State {
     this.evilPlayer.create(game, this.evilGroup);
     this.playableCoin.create(game, this.evilGroup);
 
-    game.world.setBounds(0, 0, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
+    game.world.setBounds(0, 0, this.level.getWidth() * TILE_SIZE, this.level.getHeight() * TILE_SIZE);
     this.refreshGroups(game);
-
-
-
-    /* Text example */
-    /* game.add.bitmapText(100,100, 'font', 'Sample text', 7);*/
-
-    /* Graphics example */
-    /*
-    const graphics = game.add.graphics(100, 150);
-    graphics.lineStyle(2, 0xffff00);
-    graphics.drawRect(0, 0, 50, 50); */
-
-    /* Image example */
-    //game.add.image(100, 250, 'chips', 0);
-
-    /* Animated sprite example */
-    /*const sprite = game.add.sprite(100, 300, 'chips', 1);
-    sprite.animations.add('animationName', [1, 2, 3, 4], 4, true);
-    sprite.animations.play('animationName'); */
-
-    /* Tween example */
-    //game.add.tween(sprite).to( { x: 500 }, 4000, Phaser.Easing.Default, true);
   }
 
   public update(game: Phaser.Game) {

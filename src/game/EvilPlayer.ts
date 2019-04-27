@@ -1,8 +1,11 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
-import { TILE_SIZE, LEVEL_WIDTH, LEVEL_HEIGHT } from "../app";
-import {PlayableCoin} from "./PlayableCoin";
-import {Level} from "./Level";
+import { TILE_SIZE } from "../app";
+import { PlayableCoin } from "./PlayableCoin";
+import { Level } from "../levels/Level";
+import { js as EasyStar } from "easystarjs";
+
+type Path = { x: number; y: number }[];
 
 
 export class EvilPlayer {
@@ -12,7 +15,10 @@ export class EvilPlayer {
   private isMoving: boolean;
   private target: PlayableCoin;
 
-  constructor(target: PlayableCoin, position) {
+  private path: Path = null;
+  private calculatingPath = false;
+
+  constructor(private pathfinder: EasyStar, target: PlayableCoin, position) {
     this.position = position;
     this.isMoving = false;
     this.target = target;
@@ -34,28 +40,48 @@ export class EvilPlayer {
       return;
     }
 
-    let distanceX = this.target.position.x - this.position.x;
-    let distanceY = this.target.position.y - this.position.y;
-    switch (true) {
-      case distanceX === 0 && distanceY === 0:
-        if (this.sprite.animations.currentAnim.name !== 'IDLE') {
-          this.sprite.animations.play('IDLE');
+    this.pathfinder.calculate();
+    if (this.calculatingPath) {
+      return;
+    }
+    if (this.isPathUpdateRequired()) {
+      this.pathfinder.findPath(
+        this.position.x,
+        this.position.y,
+        this.target.position.x,
+        this.target.position.y,
+        path => {
+          this.calculatingPath = false;
+          this.path = path;
+          if (this.path !== null) {
+            path.shift(); // drop the first element (it's the current position).
+          }
         }
-        break;
-      case distanceX > 0 && level.isAllowedForPlayer(this.position.right()):
-        this.moveTo(game, level, this.position.right());
-        break;
-      case distanceX < 0 && level.isAllowedForPlayer(this.position.left()):
-        this.moveTo(game, level, this.position.left());
-        break;
-      case distanceY < 0 && level.isAllowedForPlayer(this.position.up()):
-        this.moveTo(game, level, this.position.up());
-        break;
-      case distanceY > 0 && level.isAllowedForPlayer(this.position.down()):
-        this.moveTo(game, level, this.position.down());
-        break;
+      );
+      this.calculatingPath = true;
+      return;
+    }
+
+    const destination = this.path.shift();
+    const point = new Point(destination.x, destination.y);
+    if (!point.equals(this.position)) {
+      this.moveTo(game, level, point);
     }
   }
+
+  private isPathUpdateRequired = () => {
+    if (this.calculatingPath) {
+      return false;
+    }
+    if (!this.path || this.path.length === 0) {
+      return true;
+    }
+    if (this.position.equals(this.target.position)) {
+      return true;
+    }
+
+    return false;
+  };
 
 
   private moveTo(game: Phaser.Game, level: Level, position: Point) {
@@ -84,53 +110,17 @@ export class EvilPlayer {
     }, this)
   }
 
-  /*
-  private moveTo(game: Phaser.Game, position: Point, level) {
-    if (!this.isMovingAllowed(position, level)) {
-      return;
-    }
-
-    this.isMoving = true;
-    if (this.position.x < position.x) {
-      this.sprite.scale.set(1, 1);
-      this.sprite.anchor.set(0.1, 0.1);
-    } else if (this.position.x > position.x) {
-      this.sprite.scale.set(-1, 1);
-      this.sprite.anchor.set(0.9, 0.1);
-    }
-    game.add.tween(this.sprite).to(
-      {
-        x: position.x * TILE_SIZE,
-        y: position.y * TILE_SIZE
-      },
-      0.3 * Phaser.Timer.SECOND,
-      Phaser.Easing.Default,
-      true
-    );
-
-    game.time.events.add(
-      0.3 * Phaser.Timer.SECOND,
-      () => {
-        this.isMoving = false;
-        this.sprite.position.x = this.position.x * TILE_SIZE;
-        this.sprite.position.y = this.position.y * TILE_SIZE;
-        this.position = position;
-      },
-      this
-    );
-  }*/
-
   private isMovingAllowed(level: Level, position: Point) {
     if (position.x < 0) {
       return false;
     }
-    if (position.x >= LEVEL_WIDTH) {
+    if (position.x >= level.getWidth()) {
       return false;
     }
     if (position.y < 0) {
       return false;
     }
-    if (position.y >= LEVEL_HEIGHT) {
+    if (position.y >= level.getHeight()) {
       return false;
     }
     if (!level.isAllowedForPlayer(position)) {

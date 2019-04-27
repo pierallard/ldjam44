@@ -77,8 +77,12 @@ export default class Play extends Phaser.State {
 
   public update(game: Phaser.Game) {
     const spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    if (spaceKey.justDown || this.areAllCoinsDead()) {
+    if (spaceKey.justDown) {
       this.isCoinMode = !this.isCoinMode;
+      this.refreshGroups(game);
+    }
+    if (false === this.isCoinMode && true === this.areAllCoinsDead()) {
+      this.isCoinMode = true;
       this.refreshGroups(game);
     }
 

@@ -1,6 +1,6 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
-import {TILE_SIZE} from "../app";
+import {LEVEL_HEIGHT, LEVEL_WIDTH, TILE_SIZE} from "../app";
 
 export class Player {
   private sprite: Sprite;
@@ -44,6 +44,9 @@ export class Player {
   }
 
   private moveTo(game: Phaser.Game, position: Point) {
+    if (!this.isMovingAllowed(position)) {
+      return;
+    }
     this.isMoving = true;
     this.position = position;
     game.add.tween(this.sprite).to({
@@ -56,5 +59,22 @@ export class Player {
       this.sprite.position.x = this.position.x * TILE_SIZE;
       this.sprite.position.y = this.position.y * TILE_SIZE;
     }, this)
+  }
+
+  private isMovingAllowed(position: Point) {
+    if (position.x < 0) {
+      return false;
+    }
+    if (position.x >= LEVEL_WIDTH) {
+      return false;
+    }
+    if (position.y < 0) {
+      return false;
+    }
+    if (position.y >= LEVEL_HEIGHT) {
+      return false;
+    }
+
+    return true;
   }
 }

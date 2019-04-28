@@ -24,6 +24,8 @@ export default class Preload extends Phaser.State {
     this.game.load.spritesheet('coin', 'dist/assets/images/coin.png', 24, 24);
     this.game.load.spritesheet('evil_coin', 'dist/assets/images/evil_coin.png', 24, 24);
     this.game.load.image('shadow', 'dist/assets/images/shadow.png');
+    this.game.load.audio('music', 'dist/assets/musics/main_theme_chill.mp3');
+    this.game.load.audio('evil_music', 'dist/assets/musics/main_theme_rock.mp3');
   }
 
   private loadFonts() {

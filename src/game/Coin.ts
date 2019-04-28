@@ -179,7 +179,7 @@ export class Coin {
     this.isMoving = false;
   }
 
-  setPosition(position: Point) {
+  reinitialize(position: Point) {
     this.position = position;
     this.sprite.position.x = this.position.x * TILE_SIZE;
     this.sprite.position.y = this.position.y * TILE_SIZE;

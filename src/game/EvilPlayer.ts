@@ -18,6 +18,7 @@ export class EvilPlayer implements Positionable {
   private target: PlayableCoin;
   private shadow: Sprite;
   private coins: Coin[];
+  private normalPlayerIsKilling: boolean = false;
 
   private path: Path = null;
   private calculatingPath = false;
@@ -47,6 +48,9 @@ export class EvilPlayer implements Positionable {
 
   update(game: Phaser.Game, level: Level) {
     if (this.isMoving) {
+      return;
+    }
+    if (this.normalPlayerIsKilling) {
       return;
     }
 
@@ -171,13 +175,8 @@ export class EvilPlayer implements Positionable {
 
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
-    const animations = [
-      'KILL1'
-    ];
-    const anim = animations[Math.floor(Math.random() * animations.length)];
+    this.playKill();
     const length = Math.ceil(Math.random() * 3);
-
-    this.sprite.animations.play(anim);
     coin.stopMoving();
     game.time.events.add(Phaser.Timer.SECOND * length, () => {
       this.sprite.animations.play('IDLE');
@@ -192,5 +191,19 @@ export class EvilPlayer implements Positionable {
     this.sprite.position.y = this.position.y * TILE_SIZE;
     this.shadow.position.x = this.position.x * TILE_SIZE;
     this.shadow.position.y = this.position.y * TILE_SIZE;
+  }
+
+  runKillAnimation(game: Phaser.Game, duration: number) {
+    this.normalPlayerIsKilling = true;
+    this.playKill();
+    game.time.events.add(duration, () => {
+      this.normalPlayerIsKilling = false;
+    });
+  }
+
+  private playKill() {
+    const animations = ['KILL1'];
+    const anim = animations[Math.floor(Math.random() * animations.length)];
+    this.sprite.animations.play(anim);
   }
 }

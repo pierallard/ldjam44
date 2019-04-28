@@ -19,7 +19,7 @@ export class Timer {
     if (this.remainingTime === null) {
       this.text.setText('');
     } else {
-      this.text.setText(Math.max(0, this.remainingTime) + ' s');
+      this.text.setText(Math.ceil(Math.max(0, this.remainingTime)) + ' s');
     }
   }
 
@@ -31,6 +31,6 @@ export class Timer {
     if (this.remainingTime === null) {
       return false;
     }
-    return this.remainingTime < 0;
+    return this.remainingTime <= 0;
   }
 }

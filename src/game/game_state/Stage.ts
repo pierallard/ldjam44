@@ -60,7 +60,7 @@ export abstract class Stage extends Phaser.State {
     });
     this.player.setCoins(this.coins);
     this.evilPlayer.setCoins(this.coins);
-    this.coinCounter = new CoinCounter(this.coins);
+    this.coinCounter = new CoinCounter(this.coins, this.playableCoin);
     this.timer = new Timer();
     this.messageDisplayer = new MessageDisplayer();
     this.player.setPlayableCoin(this.playableCoin);
@@ -277,6 +277,9 @@ export abstract class Stage extends Phaser.State {
       if (coin.isAlive()) {
         return false;
       }
+    }
+    if (this.playableCoin.isAlive()) {
+      return false;
     }
     return true;
   };

@@ -17,17 +17,17 @@ export class Level1 extends Level {
       ],
       new Point(0, 0), // hero
       [ // coins
-        new Point(7, 1),
-        new Point(10, 1),
-        new Point(3, 3),
-        new Point(7, 4),
-        new Point(9, 5),
-        new Point(1, 6),
-        new Point(1, 8),
-        new Point(10, 8),
-        new Point(6, 10),
+        new Point(6, 0),
+        new Point(9, 0),
+        new Point(2, 2),
+        new Point(6, 3),
+        new Point(8, 4),
+        new Point(0, 5),
+        new Point(0, 7),
+        new Point(9, 7),
+        new Point(5, 9),
       ],
-      new Point(9, 1) // playable coin
+      new Point(8, 0) // playable coin
     );
   }
 }

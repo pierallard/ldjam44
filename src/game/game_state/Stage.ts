@@ -13,6 +13,9 @@ import {MessageDisplayer} from "../MessageDisplayer";
 
 
 export abstract class Stage extends Phaser.State {
+  static GLITCH_PROBA = 0.005;
+  static GLITCH_SECONDS = 0.4;
+
   protected player: Player;
   protected coins: Coin[] = [];
   protected playableCoin: PlayableCoin;
@@ -104,7 +107,7 @@ export abstract class Stage extends Phaser.State {
       return;
     }
 
-    if (Math.random() < 0.01 && !this.isGlitching) {
+    if (Math.random() < Stage.GLITCH_PROBA && !this.isGlitching) {
       this.glitch(game);
     }
 
@@ -203,7 +206,7 @@ export abstract class Stage extends Phaser.State {
     }
 
     if (unglichRandom) {
-      game.time.events.add(Math.random() * Phaser.Timer.SECOND, () => {
+      game.time.events.add(Math.random() * Stage.GLITCH_SECONDS * Phaser.Timer.SECOND, () => {
         this.isGlitching = !this.isGlitching;
         if (this.isEvilMode) {
           this.normalGroup.alpha = 0;

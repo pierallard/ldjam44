@@ -23,7 +23,9 @@ export class Player {
     this.isMoving = false;
   }
 
-  getPosition = () => this.position;
+  getPosition() {
+    return this.position;
+  }
 
   create(game: Phaser.Game, group: Phaser.Group) {
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');

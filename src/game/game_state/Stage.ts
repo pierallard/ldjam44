@@ -129,6 +129,7 @@ export abstract class Stage extends Phaser.State {
 
   updateGoodMode = (game: Game) => {
     if (this.areAllCoinsDead(this.coins)) {
+      // WIN CONDITION FOR NORMAL MODE
       this.coins.forEach((coin) => {
         coin.ressussite();
       });
@@ -137,14 +138,24 @@ export abstract class Stage extends Phaser.State {
       this.timer.setRemainingTime(this.level.getRemainingTime());
       this.evilPlayer.setPosition(new Point(0, 0));
 
+      this.messageDisplayer.display(game, "You win!", 2 * Phaser.Timer.SECOND);
+
       return;
     }
     if (this.timer.isOver()) {
-      this.game.state.restart(true);
+      // LOST CONDITION FOR NORMAL MODE
       this.coins.forEach((coin) => {
         coin.ressussite();
       });
       this.playableCoin.ressussite();
+      this.timer.setRemainingTime(this.level.getRemainingTime());
+
+      this.messageDisplayer.display(game, "You lost! Catch all the coins", 2 * Phaser.Timer.SECOND);
+      game.time.events.add(2 * Phaser.Timer.SECOND, () => {
+        this.game.state.restart(true);
+      });
+
+      return;
     }
 
     this.player.update(game, this.level);
@@ -153,11 +164,13 @@ export abstract class Stage extends Phaser.State {
 
   updateEvilMode = (game: Game) => {
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
+      // LOST CONDITION FOR EVIL MODE
       this.onGameOver();
       this.timer.setRemainingTime(this.level.getRemainingTime());
       return;
     }
-    if (this.areAllCoinsDead(this.coins)) {
+    if (this.timer.isOver()) {
+      // WIN CONDITION FOR EVIL MODE
       this.onGameWin();
       this.timer.setRemainingTime(this.level.getRemainingTime());
       return;

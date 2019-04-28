@@ -40,6 +40,9 @@ export class Coin {
   create(game: Phaser.Game, normalGroup: Phaser.Group, evilGroup: Phaser.Group) {
     this.tweens = [];
     this.timeEvents = [];
+    this.isDead = false;
+    this.isMoving = false;
+
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     this.shadow.anchor.set(0.1, 0.1);
     normalGroup.add(this.shadow);

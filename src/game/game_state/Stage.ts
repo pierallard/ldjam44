@@ -73,8 +73,10 @@ export abstract class Stage extends Phaser.State {
     this.canInteract = true;
     if (!this.music) {
         this.music = this.game.add.audio('music');
+        this.music.loop = true;
         this.evilMusic = this.game.add.audio('evil_music');
         this.evilMusic.volume = 0;
+        this.evilMusic.loop = true;
         this.music.play();
         this.evilMusic.play();
     }

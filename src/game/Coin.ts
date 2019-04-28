@@ -5,20 +5,25 @@ import {Level} from "../levels/Level";
 import {Positionable} from "./Positionable";
 
 export class Coin {
+  static SCARED_DISTANCE = 5;
+  static PROBA_FUITE = 0.03;
+
   protected sprite: Sprite;
   private evilSprite: Sprite;
   protected shadow: Sprite;
   protected position: Point;
   private isMoving = false;
-
+  private id: number;
+  private player: Positionable;
+  private coins: Coin[];
   private isDead: boolean;
 
-  constructor(private id,
-              position,
-              private player: Positionable,
-              private coins: Coin[]) {
+  constructor(id: number, position: Point, player: Positionable, coins: Coin[]) {
+    this.id = id;
     this.position = position;
     this.isDead = false;
+    this.player = player;
+    this.coins = coins;
   }
 
   getPosition = () => this.position;
@@ -54,35 +59,26 @@ export class Coin {
       return;
     }
 
-    if (Math.random() < 0.03 && this.playerIsClose()) {
-      this.playScared();
-      const possiblePositions = [
-        this.position, this.position.left(), this.position.right(), this.position.up(), this.position.down()
-      ];
-      const availablePositions = possiblePositions.filter((position) => {
-        return this.isMovingAllowed(level, position);
-      });
-
-      const playerPosition = this.player.getPosition();
-      if (availablePositions.length) {
-        const sortedPositions = availablePositions.sort((a, b) => {
-          return Coin.dist(playerPosition, b) - Coin.dist(playerPosition, a);
-        });
-        this.moveTo(game, level, sortedPositions[0]);
-
+    if (this.playerIsClose()) {
+      if (Math.random() < Coin.PROBA_FUITE) {
+        this.runAway(level, game);
+        return;
+      } else {
+        this.playScared();
       }
     } else {
-      if (Math.random() < 0.3) {
-        if (this.sprite.scale.x < 0) {
-          this.sprite.scale.set(1, 1);
-          this.sprite.anchor.set(0, 0);
-        } else {
-          this.sprite.scale.set(-1, 1);
-          this.sprite.anchor.set(1, 0);
-        }
-      }
       if (this.sprite.animations.currentAnim.name !== 'IDLE') {
         this.sprite.animations.play('IDLE');
+      }
+    }
+
+    if (Math.random() < 0.3) {
+      if (this.sprite.scale.x < 0) {
+        this.sprite.scale.set(1, 1);
+        this.sprite.anchor.set(0, 0);
+      } else {
+        this.sprite.scale.set(-1, 1);
+        this.sprite.anchor.set(1, 0);
       }
     }
   }
@@ -132,19 +128,6 @@ export class Coin {
   }
 
   private isMovingAllowed(level: Level, position: Point) {
-    if (position.x < 0) {
-      return false;
-    }
-    if (position.x >= level.getWidth()) {
-      return false;
-    }
-    if (position.y < 0) {
-      return false;
-    }
-    if (position.y >= level.getHeight()) {
-      return false;
-    }
-
     if (!level.isAllowedForCoin(position)) {
       return false;
     }
@@ -173,6 +156,7 @@ export class Coin {
     this.evilSprite.alpha = 0;
     this.shadow.alpha = 0;
     this.isDead = true;
+    this.isMoving = true;
   }
 
   stopMoving() {
@@ -180,7 +164,7 @@ export class Coin {
   }
 
   private playerIsClose() {
-    return Coin.dist(this.player.getPosition(), this.position) < 5
+    return Coin.dist(this.player.getPosition(), this.position) < Coin.SCARED_DISTANCE;
   }
 
   protected playScared() {
@@ -192,6 +176,7 @@ export class Coin {
     this.evilSprite.alpha = 1;
     this.shadow.alpha = 1;
     this.isDead = false;
+    this.isMoving = false;
   }
 
   setPosition(position: Point) {
@@ -202,5 +187,24 @@ export class Coin {
     this.evilSprite.position.y = this.position.y * TILE_SIZE;
     this.shadow.position.x = this.position.x * TILE_SIZE;
     this.shadow.position.y = this.position.y * TILE_SIZE;
+  }
+
+  private runAway(level: Level, game: Phaser.Game) {
+    const possiblePositions = [
+      this.position, this.position.left(), this.position.right(), this.position.up(), this.position.down()
+    ];
+    const availablePositions = possiblePositions.filter((position) => {
+      return this.isMovingAllowed(level, position);
+    });
+
+    const playerPosition = this.player.getPosition();
+    if (availablePositions.length) {
+      const sortedPositions = availablePositions.sort((a, b) => {
+        return Coin.dist(playerPosition, b) - Coin.dist(playerPosition, a);
+      });
+      this.moveTo(game, level, sortedPositions[0]);
+    } else {
+      this.playScared();
+    }
   }
 }

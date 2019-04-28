@@ -104,7 +104,7 @@ export class EvilPlayer implements Positionable {
   };
 
 
-  moveTo(game: Phaser.Game, level: Level, position: Point) {
+  moveTo(game: Phaser.Game, level: Level, position: Point, speed: number = null) {
     if (!this.isMovingAllowed(level, position)) {
       return;
     }
@@ -120,14 +120,14 @@ export class EvilPlayer implements Positionable {
     game.add.tween(this.sprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, EvilPlayer.SPEED, Phaser.Easing.Default, true);
+    }, speed || EvilPlayer.SPEED, Phaser.Easing.Default, true);
 
     game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, EvilPlayer.SPEED, Phaser.Easing.Default, true);
+    }, speed || EvilPlayer.SPEED, Phaser.Easing.Default, true);
 
-    game.time.events.add(EvilPlayer.SPEED, () => {
+    game.time.events.add(speed || EvilPlayer.SPEED, () => {
       this.position = position;
       this.isMoving = false;
       this.sprite.position.x = this.position.x * TILE_SIZE;

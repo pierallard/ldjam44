@@ -8,6 +8,8 @@ import { PlayableCoin } from "../PlayableCoin";
 import { Player } from "../Player";
 import Point from "../Point";
 import { Game } from "phaser-ce";
+import {Timer} from "../Timer";
+import {MessageDisplayer} from "../MessageDisplayer";
 
 
 export abstract class Stage extends Phaser.State {
@@ -22,6 +24,8 @@ export abstract class Stage extends Phaser.State {
   protected coinCounter: CoinCounter;
   private isGlitching: boolean = false;
   private level: Level;
+  private timer: Timer;
+  private messageDisplayer: MessageDisplayer;
 
   constructor(level: Level) {
     super();
@@ -42,6 +46,8 @@ export abstract class Stage extends Phaser.State {
     this.player.setCoins(this.coins);
     this.evilPlayer.setCoins(this.coins);
     this.coinCounter = new CoinCounter(this.coins);
+    this.timer = new Timer();
+    this.messageDisplayer = new MessageDisplayer();
   }
 
   abstract onGameWin();
@@ -65,6 +71,7 @@ export abstract class Stage extends Phaser.State {
     this.coinCounter.create(game, this.interfaceGroup);
     this.evilPlayer.create(game, this.evilGroup);
     this.playableCoin.create(game, this.evilGroup);
+    this.timer.create(game, this.interfaceGroup);
 
     game.world.setBounds(0, 0, this.level.getWidth() * TILE_SIZE, this.level.getHeight() * TILE_SIZE);
     this.refreshGroups(game);
@@ -76,9 +83,16 @@ export abstract class Stage extends Phaser.State {
     this.coins.forEach((coin, i) => {
       coin.setPosition(this.level.getCoinPositions()[i]);
     });
+    this.timer.setRemainingTime(this.level.getRemainingTime());
+    this.messageDisplayer.create(game, this.interfaceGroup);
+    this.messageDisplayer.display(game, "This is the create\nmessage", 3 * Phaser.Timer.SECOND);
   }
 
   public update(game: Phaser.Game) {
+    if (this.messageDisplayer.isVisible()) {
+      return;
+    }
+
     if (Math.random() < 0.01 && !this.isGlitching) {
       this.glitch(game);
     }
@@ -94,6 +108,7 @@ export abstract class Stage extends Phaser.State {
     }
 
     this.coinCounter.update();
+    this.timer.update();
   }
 
   updateGoodMode = (game: Game) => {
@@ -102,6 +117,7 @@ export abstract class Stage extends Phaser.State {
         coin.ressussite();
       });
       this.isCoinMode = true;
+      this.timer.setRemainingTime(this.level.getRemainingTime());
       this.refreshGroups(game);
       this.evilPlayer.setPosition(new Point(0, 0));
 
@@ -115,10 +131,12 @@ export abstract class Stage extends Phaser.State {
   updateEvilMode = (game: Game) => {
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
       this.onGameOver();
+      this.timer.setRemainingTime(this.level.getRemainingTime());
       return;
     }
     if (this.areAllCoinsDead(this.coins)) {
       this.onGameWin();
+      this.timer.setRemainingTime(this.level.getRemainingTime());
       return;
     }
 

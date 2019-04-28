@@ -55,6 +55,19 @@ export class Level {
   }
 
   isAllowedForPlayer(position: Point) {
+    if (position.x < 0) {
+      return false;
+    }
+    if (position.x >= this.getWidth()) {
+      return false;
+    }
+    if (position.y < 0) {
+      return false;
+    }
+    if (position.y >= this.getHeight()) {
+      return false;
+    }
+
     for (let i = 0; i < this.tiles.length; i++) {
       if (this.tiles[i].getPosition().equals(position)) {
         return this.tiles[i].isAllowedForPlayer();
@@ -97,5 +110,9 @@ export class Level {
 
   getCoinPositions() {
     return this.coinPositions;
+  }
+
+  getRemainingTime() {
+    return 20;
   }
 }

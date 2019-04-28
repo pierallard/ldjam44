@@ -102,18 +102,6 @@ export class Player {
   }
 
   private isMovingAllowed(level: Level, position: Point) {
-    if (position.x < 0) {
-      return false;
-    }
-    if (position.x >= level.getWidth()) {
-      return false;
-    }
-    if (position.y < 0) {
-      return false;
-    }
-    if (position.y >= level.getHeight()) {
-      return false;
-    }
     if (!level.isAllowedForPlayer(position)) {
       return false;
     }

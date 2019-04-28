@@ -71,7 +71,7 @@ export class Player {
   }
 
   private moveTo(game: Phaser.Game, level: Level, position: Point) {
-    this.evilPlayer.moveTo(game, level, position);
+    this.evilPlayer.moveTo(game, level, position, 0.3 * Phaser.Timer.SECOND);
     if (!this.isMovingAllowed(level, position)) {
       return;
     }

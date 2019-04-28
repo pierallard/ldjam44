@@ -2,7 +2,7 @@ import BitmapText = Phaser.BitmapText;
 
 export class Timer {
   private text: BitmapText;
-  private remainingTime;
+  private remainingTime: number;
 
   create(game: Phaser.Game, interfaceGroup: Phaser.Group) {
     this.text = game.add.bitmapText(game.width - 100, 5, "Carrier Command", "", 7, interfaceGroup);
@@ -14,10 +14,14 @@ export class Timer {
   }
 
   update() {
-    this.text.setText(this.remainingTime);
+    this.text.setText(Math.max(0, this.remainingTime) + ' s');
   }
 
   setRemainingTime(remainingTime: number) {
     this.remainingTime = remainingTime;
+  }
+
+  isOver() {
+    return this.remainingTime < 0;
   }
 }

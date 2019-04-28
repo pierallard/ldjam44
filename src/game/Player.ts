@@ -37,8 +37,8 @@ export class Player {
     group.add(this.sprite);
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
-    this.sprite.animations.add('RUN', [4, 5, 6, 7], Phaser.Timer.SECOND / 100, true);
-    this.sprite.animations.add('KILL', [8, 9, 10, 11, 12], Phaser.Timer.SECOND / 100, false);
+    this.sprite.animations.add('RUN', [4, 5, 6, 7, 8, 9], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('KILL', [10, 11, 12, 13, 14, 15, 16], Phaser.Timer.SECOND / 100, false);
     this.sprite.animations.play('IDLE');
     this.sprite.anchor.set(0.3, 0.1);
 

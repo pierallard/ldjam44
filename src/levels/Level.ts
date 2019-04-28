@@ -11,6 +11,14 @@ export class Level {
   private playerPosition: Point;
   private coinPositions: Point[];
 
+  getStageNumber() {
+    return 'X';
+  }
+
+  getNormalMessage() {
+    return "X"
+  }
+
   getWidth() {
     return this.width;
   }
@@ -47,8 +55,6 @@ export class Level {
     normalGroup: Phaser.Group,
     evilGroup: Phaser.Group
   ) {
-
-
     this.tiles.forEach(tile => {
       tile.create(game, normalGroup, evilGroup);
     });
@@ -113,6 +119,10 @@ export class Level {
   }
 
   getRemainingTime() {
-    return 30;
+    return 10;
+  }
+
+  shouldGlitch() {
+    return false;
   }
 }

@@ -9,12 +9,18 @@ export class Timer {
     this.text.fixedToCamera = true;
 
     game.time.events.loop(Phaser.Timer.SECOND, () => {
-      this.remainingTime--;
+      if (this.remainingTime !== null) {
+        this.remainingTime--;
+      }
     }, this);
   }
 
   update() {
-    this.text.setText(Math.max(0, this.remainingTime) + ' s');
+    if (this.remainingTime === null) {
+      this.text.setText('');
+    } else {
+      this.text.setText(Math.max(0, this.remainingTime) + ' s');
+    }
   }
 
   setRemainingTime(remainingTime: number) {
@@ -22,6 +28,9 @@ export class Timer {
   }
 
   isOver() {
+    if (this.remainingTime === null) {
+      return false;
+    }
     return this.remainingTime < 0;
   }
 }

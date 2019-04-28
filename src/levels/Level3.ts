@@ -1,16 +1,16 @@
 import {Level} from "./Level";
 import Point from "../game/Point";
 
-export class Level2 extends Level {
+export class Level3 extends Level {
   constructor() {
     super([
-        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
-        [0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0],
+        [1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0],
+        [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+        [1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0],
         [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0],
-        [0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0],
+        [1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+        [1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0],
         [0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0],
         [0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
@@ -32,11 +32,11 @@ export class Level2 extends Level {
   }
 
   getStageNumber() {
-    return '2';
+    return '3';
   }
 
   getNormalMessage() {
-    return "WTF has just happened?\n\nWhat was that glitch?\n\nDid I just dream?"
+    return "I don't feel so great...\n\nHow could I stop this?"
   }
 
   shouldGlitch() {

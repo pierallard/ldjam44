@@ -190,7 +190,7 @@ export class Coin {
     this.evilSprite.animations.play('SCARED');
   }
 
-  ressussite() {
+  ressussitate() {
     this.sprite.alpha = 1;
     this.evilSprite.alpha = 1;
     this.shadow.alpha = 1;

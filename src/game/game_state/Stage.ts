@@ -16,6 +16,10 @@ export abstract class Stage extends Phaser.State {
   static GLITCH_PROBA = 0.005;
   static GLITCH_SECONDS = 0.04;
 
+  static scenarioDurationMessage = 4 * Phaser.Timer.SECOND;
+  static stageMessageDuration = Phaser.Timer.SECOND * 2;
+  static betweenDuration = Phaser.Timer.SECOND * 0.5;
+
   protected player: Player;
   protected coins: Coin[] = [];
   protected playableCoin: PlayableCoin;
@@ -31,14 +35,20 @@ export abstract class Stage extends Phaser.State {
   private messageDisplayer: MessageDisplayer;
   private music: Phaser.Sound;
   private evilMusic: Phaser.Sound;
+  private canInteract: boolean;
+  private firstStart: boolean;
+  private stepCounter: number;
 
   constructor(level: Level) {
     super();
     this.level = level;
+    this.firstStart = true;
 
     const pathfinder = new EasyStar();
     pathfinder.setAcceptableTiles([0]);
     pathfinder.setGrid(this.level.getGrid());
+    this.firstStart = true; // TODO
+    //this.firstStart = false;
 
     this.playableCoin = new PlayableCoin(this.level.getOriginalPlayableCoinPosition());
     this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.level.getOriginalPlayerPosition());
@@ -60,6 +70,7 @@ export abstract class Stage extends Phaser.State {
   abstract onGameOver();
 
   public create(game: Phaser.Game) {
+    this.canInteract = true;
     if (!this.music) {
         this.music = this.game.add.audio('music');
         this.evilMusic = this.game.add.audio('evil_music');
@@ -96,10 +107,16 @@ export abstract class Stage extends Phaser.State {
     this.coins.forEach((coin, i) => {
       coin.reinitialize(this.level.getCoinPositions()[i]);
     });
-    const durationMessage = 3 * Phaser.Timer.SECOND;
-    this.timer.setRemainingTime(this.level.getRemainingTime() + durationMessage / Phaser.Timer.SECOND); // yeah, game jam
+
+    let duration = this.level.getRemainingTime();
     this.messageDisplayer.create(game, this.interfaceGroup);
-    this.messageDisplayer.display(game, "This is the create\nmessage", durationMessage);
+    if (this.firstStart) {
+      duration += this.showStageBegin(game) / Phaser.Timer.SECOND;
+    }
+
+    this.timer.setRemainingTime(duration); // yeah, game jam
+
+    this.firstStart = false;
   }
 
   public update(game: Phaser.Game) {
@@ -107,13 +124,12 @@ export abstract class Stage extends Phaser.State {
     if (this.messageDisplayer.isVisible()) {
       return;
     }
-
-    if (Math.random() < Stage.GLITCH_PROBA && !this.isGlitching) {
-      this.glitch(game);
+    if (!this.canInteract) {
+      return;
     }
 
-    if (game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).justDown) {
-      this.glitch(game, false);
+    if (this.level.shouldGlitch() && Math.random() < Stage.GLITCH_PROBA && !this.isGlitching) {
+      this.glitch(game);
     }
 
     if (this.isEvilMode) {
@@ -131,27 +147,58 @@ export abstract class Stage extends Phaser.State {
     if (this.areAllCoinsDead(this.coins)) {
       // WIN CONDITION FOR NORMAL MODE
       this.coins.forEach((coin) => {
-        coin.ressussite();
+        coin.ressussitate();
       });
-      this.playableCoin.ressussite();
-      this.isEvilMode = true;
-      this.timer.setRemainingTime(this.level.getRemainingTime());
-      this.evilPlayer.setPosition(new Point(0, 0));
 
-      this.messageDisplayer.display(game, "You win!", 2 * Phaser.Timer.SECOND);
+      this.canInteract = false;
+
+      const winMessageDuration = 3 * Phaser.Timer.SECOND;
+      const superGlitchDuration = 2 * Phaser.Timer.SECOND;
+      this.messageDisplayer.displayBig(game, "You win!", winMessageDuration);
+
+      // Little glitches
+      for (let i = 0; i < 20; i++) {
+        game.time.events.add(Math.random() * winMessageDuration, () => {
+          if (this.isGlitching) { return; }
+          const time = Math.random() * 0.3 * Phaser.Timer.SECOND;
+          this.glitch(game, true, time);
+          this.messageDisplayer.setText('You lost!');
+          this.game.time.events.add(time, () => {
+            this.messageDisplayer.setText('You win!');
+          })
+        }, this);
+      }
+
+      // Big glitches
+      game.time.events.add(winMessageDuration, () => {
+        this.runSuperGlitch(game, superGlitchDuration);
+      });
+
+      game.time.events.add(
+        winMessageDuration + superGlitchDuration,
+        () => {
+          this.canInteract = true;
+          this.isEvilMode = true;
+          this.playableCoin.ressussite();
+          this.timer.setRemainingTime(null);
+          this.evilPlayer.setPosition(this.level.getOriginalPlayerPosition());
+          this.evilPlayer.setVisible(false);
+          this.stepCounter = 0;
+        });
 
       return;
     }
     if (this.timer.isOver()) {
       // LOST CONDITION FOR NORMAL MODE
       this.coins.forEach((coin) => {
-        coin.ressussite();
+        coin.ressussitate();
       });
       this.playableCoin.ressussite();
       this.timer.setRemainingTime(this.level.getRemainingTime());
 
-      this.messageDisplayer.display(game, "You lost! Catch all the coins", 2 * Phaser.Timer.SECOND);
-      game.time.events.add(2 * Phaser.Timer.SECOND, () => {
+      const messageLostDuration = 5 * Phaser.Timer.SECOND;
+      this.messageDisplayer.display(game, "Argh, I have to improve my\n\nskills to catch these coins\n\nfaster!", messageLostDuration);
+      game.time.events.add(messageLostDuration, () => {
         this.game.state.restart(true);
       });
 
@@ -165,19 +212,48 @@ export abstract class Stage extends Phaser.State {
   updateEvilMode = (game: Game) => {
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
       // LOST CONDITION FOR EVIL MODE
-      this.onGameOver();
-      this.timer.setRemainingTime(this.level.getRemainingTime());
+
+      this.canInteract = false;
+      this.evilPlayer.playKill();
+
+      const glitchDuration = Phaser.Timer.SECOND;
+      const killAnimationTime = 1.4 * Phaser.Timer.SECOND;
+      game.time.events.add(killAnimationTime, () => {
+        this.evilPlayer.playIdle();
+        this.runSuperGlitch(game, glitchDuration);
+      });
+      game.time.events.add(glitchDuration + killAnimationTime, () => {
+        this.onGameOver();
+        this.timer.setRemainingTime(this.level.getRemainingTime());
+        this.canInteract = true;
+      });
+
       return;
     }
     if (this.timer.isOver()) {
       // WIN CONDITION FOR EVIL MODE
       this.onGameWin();
       this.timer.setRemainingTime(this.level.getRemainingTime());
+
       return;
     }
 
     this.evilPlayer.update(game, this.level);
-    this.playableCoin.update(game, this.level);
+    const hasMoved = this.playableCoin.update(game, this.level);
+    if (hasMoved) {
+      this.stepCounter++;
+      if (this.stepCounter === 3) {
+        this.evilPlayer.setVisible(true);
+        this.canInteract = false;
+        this.evilPlayer.canMove = false;
+        const durationMEssage = this.showStageBegin(game);
+        game.time.events.add(durationMEssage, () => {
+          this.canInteract = true;
+          this.evilPlayer.canMove = true;
+          this.timer.setRemainingTime(this.level.getRemainingTime());
+        });
+      }
+    }
     this.coins.forEach(coin => coin.update(game, this.level));
   };
 
@@ -205,7 +281,7 @@ export abstract class Stage extends Phaser.State {
     return true;
   };
 
-  private glitch(game: Phaser.Game, unglichRandom: boolean = true) {
+  private glitch(game: Phaser.Game, unglichRandom: boolean = true, time = Math.random() * Stage.GLITCH_SECONDS * Phaser.Timer.SECOND) {
     this.isGlitching = !this.isGlitching;
     if (this.normalGroup.alpha === 0) {
       this.normalGroup.alpha = 1;
@@ -222,7 +298,7 @@ export abstract class Stage extends Phaser.State {
     }
 
     if (unglichRandom) {
-      game.time.events.add(Math.random() * Stage.GLITCH_SECONDS * Phaser.Timer.SECOND, () => {
+      game.time.events.add(time, () => {
         this.isGlitching = !this.isGlitching;
         if (this.isEvilMode) {
           this.normalGroup.alpha = 0;
@@ -238,6 +314,28 @@ export abstract class Stage extends Phaser.State {
           this.evilMusic.volume = 0;
         }
       }, this)
+    }
+  }
+
+  private showStageBegin(game: Phaser.Game) {
+    this.canInteract = false;
+    this.messageDisplayer.display(game, this.level.getNormalMessage(), Stage.scenarioDurationMessage);
+    this.game.time.events.add(Stage.scenarioDurationMessage + Stage.betweenDuration, () => {
+      this.messageDisplayer.displayBig(game, "Stage " + this.level.getStageNumber() + "/3", Stage.stageMessageDuration);
+    });
+    this.game.time.events.add(Stage.stageMessageDuration + Stage.scenarioDurationMessage + Stage.betweenDuration, () => {
+      this.canInteract = true;
+    });
+    return (Stage.scenarioDurationMessage + Stage.stageMessageDuration + Stage.betweenDuration);
+  }
+
+  private runSuperGlitch(game: Phaser.Game, superGlitchDuration) {
+    for (let i = 0; i < 40; i++) {
+      game.time.events.add(Math.random() * superGlitchDuration, () => {
+        if (this.isGlitching) { return; }
+        const time = Math.random() * 0.05 * Phaser.Timer.SECOND;
+        this.glitch(game, true, time);
+      }, this);
     }
   }
 }

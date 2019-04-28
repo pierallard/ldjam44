@@ -48,24 +48,30 @@ export class PlayableCoin {
     game.camera.follow(this.sprite);
   }
 
-  update(game: Phaser.Game, level) {
+  update(game: Phaser.Game, level): boolean {
     if (this.isMoving) {
-      return;
+      return false;
     }
 
     if (this.leftKey.isDown) {
       this.moveTo(game, this.position.left(), level);
+      return true;
     } else if (this.rightKey.isDown) {
       this.moveTo(game, this.position.right(), level);
+      return true;
     } else if (this.upKey.isDown) {
       this.moveTo(game, this.position.up(), level);
+      return true;
     } else if (this.downKey.isDown) {
       this.moveTo(game, this.position.down(), level);
+      return true;
     } else {
       if (this.sprite.animations.currentAnim.name !== 'IDLE') {
         this.sprite.animations.play('IDLE');
       }
     }
+
+    return false;
   }
 
   private moveTo(game: Phaser.Game, position: Point, level) {

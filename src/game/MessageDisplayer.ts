@@ -25,10 +25,11 @@ export class MessageDisplayer {
     this.text = game.add.bitmapText(
       (game.width - MessageDisplayer.WIDTH) / 2 + MessageDisplayer.GAP,
       (game.height - MessageDisplayer.HEIGHT) / 2 + MessageDisplayer.GAP,
-      "Carrier Command", "", 7, interfaceGroup);
+      "Carrier Command", "", 5, interfaceGroup);
     interfaceGroup.add(this.text);
 
     this.text.setText("default text");
+    this.text.fixedToCamera = true;
     this.setVisible(false);
   }
 
@@ -36,6 +37,10 @@ export class MessageDisplayer {
     if (game.input.keyboard.addKey(Phaser.Keyboard.ENTER).justDown) {
       this.setVisible(false);
     }
+  }
+
+  displayBig(game, text, duration) {
+    this.display(game, text, duration);
   }
 
   display(game: Game, text: string, duration: number) {
@@ -60,5 +65,9 @@ export class MessageDisplayer {
 
   isVisible() {
     return this.visible;
+  }
+
+  setText(youLost: string) {
+    this.text.setText(youLost);
   }
 }

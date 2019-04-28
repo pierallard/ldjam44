@@ -19,6 +19,8 @@ export class EvilPlayer implements Positionable {
   private shadow: Sprite;
   private coins: Coin[];
   private normalPlayerIsKilling: boolean = false;
+  private visible: boolean;
+  canMove: boolean;
 
   private path: Path = null;
   private calculatingPath = false;
@@ -27,9 +29,11 @@ export class EvilPlayer implements Positionable {
     this.position = position;
     this.isMoving = false;
     this.target = target;
+    this.visible = true;
   }
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.canMove = true;
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     group.add(this.shadow);
     this.shadow.anchor.set(0.1, 0.1);
@@ -47,10 +51,16 @@ export class EvilPlayer implements Positionable {
   }
 
   update(game: Phaser.Game, level: Level) {
+    if (!this.visible) {
+      return;
+    }
     if (this.isMoving) {
       return;
     }
     if (this.normalPlayerIsKilling) {
+      return;
+    }
+    if (!this.canMove) {
       return;
     }
 
@@ -200,7 +210,7 @@ export class EvilPlayer implements Positionable {
     });
   }
 
-  private playKill() {
+  playKill() {
     const animations = ['KILL1'];
     const anim = animations[Math.floor(Math.random() * animations.length)];
     this.sprite.animations.play(anim);
@@ -208,5 +218,16 @@ export class EvilPlayer implements Positionable {
 
   playIdle() {
     this.sprite.animations.play('IDLE');
+  }
+
+  setVisible(visible: boolean) {
+    this.visible = visible;
+    if (!this.visible) {
+      this.sprite.alpha = 0;
+      this.shadow.alpha = 0;
+    } else {
+      this.sprite.alpha = 1;
+      this.shadow.alpha = 1;
+    }
   }
 }

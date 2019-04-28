@@ -120,6 +120,7 @@ export abstract class Stage extends Phaser.State {
     } else {
       this.updateGoodMode(game);
     }
+    this.refreshGroups(game);
 
     this.coinCounter.update();
     this.timer.update();
@@ -133,7 +134,6 @@ export abstract class Stage extends Phaser.State {
       this.playableCoin.ressussite();
       this.isEvilMode = true;
       this.timer.setRemainingTime(this.level.getRemainingTime());
-      this.refreshGroups(game);
       this.evilPlayer.setPosition(new Point(0, 0));
 
       return;
@@ -151,7 +151,6 @@ export abstract class Stage extends Phaser.State {
   };
 
   updateEvilMode = (game: Game) => {
-    this.refreshGroups(game);
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
       this.onGameOver();
       this.timer.setRemainingTime(this.level.getRemainingTime());

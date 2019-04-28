@@ -11,7 +11,7 @@ import Game = Phaser.Game;
 type Path = { x: number; y: number }[];
 
 export class EvilPlayer implements Positionable {
-  private static SPEED = 0.2 * Phaser.Timer.SECOND;
+  private static SPEED = 0.22 * Phaser.Timer.SECOND;
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
@@ -38,10 +38,10 @@ export class EvilPlayer implements Positionable {
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
     this.sprite.animations.add('RUN', [4, 5, 6, 7, 8, 9], Phaser.Timer.SECOND / 100, true);
-    this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], Phaser.Timer.SECOND / 100, true);
     //this.sprite.animations.add('KILL2', [15, 16, 17], Phaser.Timer.SECOND / 100, false);
     this.sprite.animations.play('IDLE');
-    this.sprite.anchor.set(0.1, 0.1);
+    this.sprite.anchor.set(0.3, 0.3);
 
     group.add(this.sprite);
   }
@@ -111,10 +111,10 @@ export class EvilPlayer implements Positionable {
     this.isMoving = true;
     if (this.position.x < position.x) {
       this.sprite.scale.set(1, 1);
-      this.sprite.anchor.set(0.1, 0.1);
+      this.sprite.anchor.set(0.3, 0.3);
     } else if (this.position.x > position.x) {
       this.sprite.scale.set(-1, 1);
-      this.sprite.anchor.set(0.9, 0.1);
+      this.sprite.anchor.set(0.7, 0.3);
     }
     this.sprite.animations.play('RUN');
     game.add.tween(this.sprite).to({
@@ -176,9 +176,8 @@ export class EvilPlayer implements Positionable {
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
     this.playKill();
-    const length = Math.ceil(Math.random() * 3);
     coin.stopMoving(game);
-    game.time.events.add(Phaser.Timer.SECOND * length, () => {
+    game.time.events.add(Phaser.Timer.SECOND * 1, () => {
       this.sprite.animations.play('IDLE');
       this.isMoving = false;
       coin.kill();

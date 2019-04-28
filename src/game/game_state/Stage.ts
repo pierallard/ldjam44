@@ -52,6 +52,7 @@ export abstract class Stage extends Phaser.State {
   public create(game: Phaser.Game) {
     this.music = this.game.add.audio('music');
     this.evilMusic = this.game.add.audio('evil_music');
+    this.evilMusic.volume = 0;
     this.music.play();
     this.evilMusic.play();
 
@@ -160,20 +161,32 @@ export abstract class Stage extends Phaser.State {
     if (this.normalGroup.alpha === 0) {
       this.normalGroup.alpha = 1;
       this.evilGroup.alpha = 0;
+
+      this.music.volume = 1;
+      this.evilMusic.volume = 0;
     } else {
       this.normalGroup.alpha = 0;
       this.evilGroup.alpha = 1;
+
+      this.music.volume = 0;
+      this.evilMusic.volume = 1;
     }
 
     if (unglichRandom) {
-      game.time.events.add(Math.random() * Phaser.Timer.SECOND / 10, () => {
+      game.time.events.add(Math.random() * Phaser.Timer.SECOND, () => {
         this.isGlitching = !this.isGlitching;
         if (this.isCoinMode) {
           this.normalGroup.alpha = 0;
           this.evilGroup.alpha = 1;
+
+          this.music.volume = 0;
+          this.evilMusic.volume = 1;
         } else {
           this.normalGroup.alpha = 1;
           this.evilGroup.alpha = 0;
+
+          this.music.volume = 1;
+          this.evilMusic.volume = 0;
         }
       }, this)
     }

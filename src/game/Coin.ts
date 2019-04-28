@@ -3,6 +3,8 @@ import Point from "./Point";
 import {TILE_SIZE} from "../app";
 import {Level} from "../levels/Level";
 import {Positionable} from "./Positionable";
+import Tween = Phaser.Tween;
+import TimerEvent = Phaser.TimerEvent;
 
 export class Coin {
   static SCARED_DISTANCE = 5;
@@ -17,6 +19,8 @@ export class Coin {
   private player: Positionable;
   private coins: Coin[];
   private isDead: boolean;
+  private tweens: Tween[];
+  private timeEvents: TimerEvent[];
 
   constructor(id: number, position: Point, player: Positionable, coins: Coin[]) {
     this.id = id;
@@ -33,6 +37,8 @@ export class Coin {
   }
 
   create(game: Phaser.Game, normalGroup: Phaser.Group, evilGroup: Phaser.Group) {
+    this.tweens = [];
+    this.timeEvents = [];
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     this.shadow.anchor.set(0.1, 0.1);
     normalGroup.add(this.shadow);
@@ -101,30 +107,29 @@ export class Coin {
       this.evilSprite.anchor.set(1, 0);
     }
 
-    this.position = position;
-
-    game.add.tween(this.sprite).to({
+    this.tweens.push(game.add.tween(this.sprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true));
 
-    game.add.tween(this.evilSprite).to({
+    this.tweens.push(game.add.tween(this.evilSprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true));
 
-    game.add.tween(this.shadow).to({
+    this.tweens.push(game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true));
 
-    game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
+    this.timeEvents.push(game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
       this.isMoving = false;
+      this.position = position;
       this.sprite.position.x = this.position.x * TILE_SIZE;
       this.sprite.position.y = this.position.y * TILE_SIZE;
       this.evilSprite.position.x = this.position.x * TILE_SIZE;
       this.evilSprite.position.y = this.position.y * TILE_SIZE;
-    }, this)
+    }, this))
   }
 
   private isMovingAllowed(level: Level, position: Point) {
@@ -159,8 +164,29 @@ export class Coin {
     this.isMoving = true;
   }
 
-  stopMoving() {
+  stopMoving(game: Phaser.Game) {
     this.isMoving = true;
+    this.tweens.forEach((tween: Phaser.Tween) => {
+      tween.stop(false);
+    });
+    this.timeEvents.forEach((timeEvent: TimerEvent) => {
+      timeEvent.callback = () => {}
+    });
+
+    game.add.tween(this.sprite).to({
+      x: this.position.x * TILE_SIZE,
+      y: this.position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+
+    game.add.tween(this.evilSprite).to({
+      x: this.position.x * TILE_SIZE,
+      y: this.position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+
+    game.add.tween(this.shadow).to({
+      x: this.position.x * TILE_SIZE,
+      y: this.position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
   }
 
   private playerIsClose() {

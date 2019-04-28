@@ -141,7 +141,7 @@ export class Player {
     const duration = 0.5 * Phaser.Timer.SECOND;
     this.evilPlayer.runKillAnimation(game, duration);
     if (coin instanceof Coin) {
-      coin.stopMoving();
+      coin.stopMoving(game);
     }
     game.time.events.add(duration, () => {
       this.sprite.animations.play('IDLE');

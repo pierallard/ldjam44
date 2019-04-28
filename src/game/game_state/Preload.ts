@@ -13,15 +13,15 @@ export default class Preload extends Phaser.State {
   }
 
   private loadImages() {
-    this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12)
+    this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12);
     this.game.load.spritesheet('basic_ground', 'dist/assets/images/ground/basic.png', 24, 24);
     this.game.load.spritesheet('evil_ground', 'dist/assets/images/ground/evil_basic.png', 24, 24);
     this.game.load.image('bloc_box', 'dist/assets/images/ground/bloc.png');
     this.game.load.image('evil_bloc_box', 'dist/assets/images/ground/evil_bloc.png');
     this.game.load.image('bloc_stone', 'dist/assets/images/ground/bloc2.png');
     this.game.load.image('evil_bloc_stone', 'dist/assets/images/ground/evil_bloc2.png');
-    this.game.load.spritesheet('normal_hero', 'dist/assets/images/gentil_hero_all.png', 30, 30);
-    this.game.load.spritesheet('evil_hero', 'dist/assets/images/evil_hero_all.png', 30, 30);
+    this.game.load.spritesheet('normal_hero', 'dist/assets/images/gentil_hero_all.png', 60, 30);
+    this.game.load.spritesheet('evil_hero', 'dist/assets/images/evil_hero_all.png', 60, 60);
     this.game.load.spritesheet('normal_coin', 'dist/assets/images/gentil_coin.png', 24, 24);
     this.game.load.spritesheet('coin', 'dist/assets/images/coin.png', 24, 24);
     this.game.load.spritesheet('evil_coin', 'dist/assets/images/evil_coin.png', 24, 24);

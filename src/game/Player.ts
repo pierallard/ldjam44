@@ -126,8 +126,10 @@ export class Player {
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
     this.sprite.animations.play('KILL');
+    const duration = 0.5 * Phaser.Timer.SECOND;
+    this.evilPlayer.runKillAnimation(game, duration);
     coin.stopMoving();
-    game.time.events.add(0.5 * Phaser.Timer.SECOND, () => {
+    game.time.events.add(duration, () => {
       this.sprite.animations.play('IDLE');
       this.isMoving = false;
       coin.kill();

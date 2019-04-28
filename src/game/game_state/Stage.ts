@@ -103,6 +103,7 @@ export abstract class Stage extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
+    this.messageDisplayer.update(game);
     if (this.messageDisplayer.isVisible()) {
       return;
     }

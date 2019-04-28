@@ -32,6 +32,12 @@ export class MessageDisplayer {
     this.setVisible(false);
   }
 
+  update(game: Phaser.Game) {
+    if (game.input.keyboard.addKey(Phaser.Keyboard.ENTER).justDown) {
+      this.setVisible(false);
+    }
+  }
+
   display(game: Game, text: string, duration: number) {
     this.setVisible(true);
     this.text.setText(text);

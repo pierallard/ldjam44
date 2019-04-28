@@ -11,7 +11,7 @@ import Game = Phaser.Game;
 type Path = { x: number; y: number }[];
 
 export class EvilPlayer implements Positionable {
-  private static SPEED = 0.3 * Phaser.Timer.SECOND;
+  private static SPEED = 0.2 * Phaser.Timer.SECOND;
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;

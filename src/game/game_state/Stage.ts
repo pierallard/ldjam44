@@ -17,7 +17,7 @@ export abstract class Stage extends Phaser.State {
   protected coins: Coin[] = [];
   protected playableCoin: PlayableCoin;
   protected evilPlayer: EvilPlayer;
-  protected isCoinMode: boolean = false;
+  protected isEvilMode: boolean = false;
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
   protected interfaceGroup: Phaser.Group;
@@ -110,7 +110,7 @@ export abstract class Stage extends Phaser.State {
       this.glitch(game, false);
     }
 
-    if (this.isCoinMode) {
+    if (this.isEvilMode) {
       this.updateEvilMode(game);
     } else {
       this.updateGoodMode(game);
@@ -125,7 +125,7 @@ export abstract class Stage extends Phaser.State {
       this.coins.forEach((coin) => {
         coin.ressussite();
       });
-      this.isCoinMode = true;
+      this.isEvilMode = true;
       this.timer.setRemainingTime(this.level.getRemainingTime());
       this.refreshGroups(game);
       this.evilPlayer.setPosition(new Point(0, 0));
@@ -158,7 +158,7 @@ export abstract class Stage extends Phaser.State {
   };
 
   private refreshGroups(game: Phaser.Game) {
-    if (this.isCoinMode) {
+    if (this.isEvilMode) {
       this.normalGroup.alpha = 0;
       this.evilGroup.alpha = 1;
       this.playableCoin.followCamera(game);
@@ -197,7 +197,7 @@ export abstract class Stage extends Phaser.State {
     if (unglichRandom) {
       game.time.events.add(Math.random() * Phaser.Timer.SECOND, () => {
         this.isGlitching = !this.isGlitching;
-        if (this.isCoinMode) {
+        if (this.isEvilMode) {
           this.normalGroup.alpha = 0;
           this.evilGroup.alpha = 1;
 

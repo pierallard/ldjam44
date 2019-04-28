@@ -206,4 +206,8 @@ export class EvilPlayer implements Positionable {
     const anim = animations[Math.floor(Math.random() * animations.length)];
     this.sprite.animations.play(anim);
   }
+
+  playIdle() {
+    this.sprite.animations.play('IDLE');
+  }
 }

@@ -71,6 +71,7 @@ export class Player {
       this.moveTo(game, level, this.position.down());
     } else {
       this.sprite.animations.play('IDLE');
+      this.evilPlayer.playIdle();
     }
   }
 

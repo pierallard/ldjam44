@@ -3,19 +3,27 @@ import { Tile } from "../game/Tile";
 import {Bloc} from "../game/Bloc";
 
 export class Level {
+  private grid: number[][];
   protected tiles: Tile[] = [];
-
   protected width: number;
   protected height: number;
+  private playableCoinPosition: Point;
+  private playerPosition: Point;
+  private coinPositions: Point[];
 
-  getWidth = () => this.width;
+  getWidth() {
+    return this.width;
+  }
 
-  getHeight = () => this.height;
+  getHeight() {
+    return this.height;
+  }
 
-  private grid: number[][];
-
-  constructor(levelDescriptor: number[][]) {
+  constructor(levelDescriptor: number[][], playerPosition: Point, coinPositions: Point[], evilCoinPosition: Point) {
     this.grid = levelDescriptor;
+    this.playableCoinPosition = evilCoinPosition;
+    this.playerPosition = playerPosition;
+    this.coinPositions = coinPositions;
 
     for (let y = 0; y < this.grid.length; y++) {
       for (let x = 0; x < this.grid[y].length; x++) {
@@ -64,5 +72,17 @@ export class Level {
 
   getGrid(): number[][] {
     return this.grid;
+  }
+
+  getOriginalPlayableCoinPosition() {
+    return this.playableCoinPosition;
+  }
+
+  getOriginalPlayerPosition() {
+    return this.playerPosition;
+  }
+
+  getCoinPositions() {
+    return this.coinPositions;
   }
 }

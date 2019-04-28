@@ -1,6 +1,5 @@
 import { Level1 } from "../../levels/Level1";
 import { Stage } from "./Stage";
-import { Game, StateManager } from "phaser-ce";
 
 export default class Stage1 extends Stage {
   constructor() {

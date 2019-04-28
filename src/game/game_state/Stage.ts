@@ -20,7 +20,6 @@ export abstract class Stage extends Phaser.State {
   protected evilGroup: Phaser.Group;
   protected interfaceGroup: Phaser.Group;
   protected coinCounter: CoinCounter;
-  private coinPositions: Point[];
   private isGlitching: boolean = false;
   private level: Level;
 
@@ -28,82 +27,55 @@ export abstract class Stage extends Phaser.State {
     super();
     this.level = level;
 
-    this.coinPositions = [];
-    let tries = 1000;
-    while (this.coinPositions.length < 10 && tries > 0) {
-      const position = new Point(
-        Math.ceil(Math.random() * this.level.getWidth()),
-        Math.ceil(Math.random() * this.level.getHeight())
-      );
-      if (this.level.isAllowedForCoin(position)) {
-        this.coinPositions.push(position);
-      }
-      tries--;
-    }
-
-    this.playableCoin = new PlayableCoin(new Point(this.coinPositions[0].x, this.coinPositions[0].y));
-
     const pathfinder = new EasyStar();
     pathfinder.setAcceptableTiles([0]);
     pathfinder.setGrid(this.level.getGrid());
 
-    this.player = new Player();
-
-    this.evilPlayer = new EvilPlayer(
-      pathfinder,
-      this.playableCoin,
-      this.player.getPosition()
-    );
-
-    this.player.attachEvilPlayer(this.evilPlayer);
-
-    this.coinPositions.forEach((pos, i) => {
-      if (i !== 0) {
-        this.coins.push(new Coin(i, pos, this.evilPlayer, this.coins));
-      }
+    this.playableCoin = new PlayableCoin(this.level.getOriginalPlayableCoinPosition());
+    this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.level.getOriginalPlayerPosition());
+    this.player = new Player(this.level.getOriginalPlayerPosition());
+    this.player.setEvilPlayer(this.evilPlayer);
+    this.coins = [];
+    this.level.getCoinPositions().forEach((pos, i) => {
+      this.coins.push(new Coin(i, pos, this.evilPlayer, this.coins));
     });
-
     this.player.setCoins(this.coins);
     this.evilPlayer.setCoins(this.coins);
-
     this.coinCounter = new CoinCounter(this.coins);
   }
 
-  protected onGameWin = () => {};
-  protected onGameOver() {
-
-  };
+  abstract onGameWin();
+  abstract onGameOver();
 
   public create(game: Phaser.Game) {
-    this.player.setPosition(new Point(0, 0));
-    this.evilPlayer.setPosition(new Point(0, 0));
-    this.playableCoin.setPosition(this.coinPositions[0]);
-
+    /** Create groups */
     this.evilGroup = game.add.group(null, "EVIL");
     this.normalGroup = game.add.group(null, "NORMAL");
     this.interfaceGroup = game.add.group(null, 'INTERFACE');
-
     game.add.existing(this.normalGroup);
     game.add.existing(this.evilGroup);
     game.add.existing(this.interfaceGroup);
 
+    /** Create items */
     this.level.create(game, this.normalGroup, this.evilGroup);
     this.player.create(game, this.normalGroup);
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup, this.evilGroup);
     });
     this.coinCounter.create(game, this.interfaceGroup);
-
     this.evilPlayer.create(game, this.evilGroup);
     this.playableCoin.create(game, this.evilGroup);
 
-    game.world.setBounds(
-      0,
-      0,
-      this.level.getWidth() * TILE_SIZE,
-      this.level.getHeight() * TILE_SIZE
-    );
+    game.world.setBounds(0, 0, this.level.getWidth() * TILE_SIZE, this.level.getHeight() * TILE_SIZE);
     this.refreshGroups(game);
+
+    /** Reset positions of all the items */
+    this.player.setPosition(this.level.getOriginalPlayerPosition());
+    this.evilPlayer.setPosition(this.level.getOriginalPlayerPosition());
+    this.playableCoin.setPosition(this.level.getOriginalPlayableCoinPosition());
+    this.coins.forEach((coin, i) => {
+      coin.setPosition(this.level.getCoinPositions()[i]);
+    });
   }
 
   public update(game: Phaser.Game) {

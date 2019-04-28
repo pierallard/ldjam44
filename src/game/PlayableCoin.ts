@@ -114,5 +114,9 @@ export class PlayableCoin {
 
   setPosition(point: Point) {
     this.position = point;
+    this.sprite.position.x = this.position.x * TILE_SIZE;
+    this.sprite.position.y = this.position.y * TILE_SIZE;
+    this.shadow.position.x = this.position.x * TILE_SIZE;
+    this.shadow.position.y = this.position.y * TILE_SIZE;
   }
 }

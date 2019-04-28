@@ -5,4 +5,10 @@ export default class Stage2 extends Stage {
   constructor() {
     super(new Level2());
   }
+
+  onGameWin = () => this.game.state.start("Stage3");
+
+  onGameOver() {
+    this.game.state.restart(true);
+  }
 }

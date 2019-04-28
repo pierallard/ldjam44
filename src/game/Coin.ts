@@ -193,4 +193,14 @@ export class Coin {
     this.shadow.alpha = 1;
     this.isDead = false;
   }
+
+  setPosition(position: Point) {
+    this.position = position;
+    this.sprite.position.x = this.position.x * TILE_SIZE;
+    this.sprite.position.y = this.position.y * TILE_SIZE;
+    this.evilSprite.position.x = this.position.x * TILE_SIZE;
+    this.evilSprite.position.y = this.position.y * TILE_SIZE;
+    this.shadow.position.x = this.position.x * TILE_SIZE;
+    this.shadow.position.y = this.position.y * TILE_SIZE;
+  }
 }

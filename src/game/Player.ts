@@ -18,8 +18,8 @@ export class Player {
   private coins: Coin[];
   private evilPlayer: EvilPlayer;
 
-  constructor() {
-    this.position = new Point(0, 0);
+  constructor(position: Point) {
+    this.position = position;
     this.isMoving = false;
   }
 
@@ -148,9 +148,13 @@ export class Player {
 
   setPosition(point: Point) {
     this.position = point;
+    this.sprite.position.x = this.position.x * TILE_SIZE;
+    this.sprite.position.y = this.position.y * TILE_SIZE;
+    this.shadow.position.x = this.position.x * TILE_SIZE;
+    this.shadow.position.y = this.position.y * TILE_SIZE;
   }
 
-  attachEvilPlayer(evilPlayer: EvilPlayer) {
+  setEvilPlayer(evilPlayer: EvilPlayer) {
     this.evilPlayer = evilPlayer;
   }
 }

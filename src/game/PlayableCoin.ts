@@ -12,22 +12,30 @@ export class PlayableCoin {
   private downKey: Phaser.Key;
   private isMoving: boolean;
   private shadow: Sprite;
+  private normalSprite: Sprite;
+  private dead: boolean;
 
   constructor(position: Point) {
     this.position = position;
     this.isMoving = false;
   }
 
-  create(game: Phaser.Game, group: Phaser.Group) {
+  create(game: Phaser.Game, evilGroup: Phaser.Group, normalGroup: Phaser.Group) {
+    this.dead = false;
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
-    group.add(this.shadow);
+    evilGroup.add(this.shadow);
+    normalGroup.add(this.shadow);
     this.shadow.anchor.set(0.1, 0.1);
     this.sprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'coin');
     this.sprite.animations.add('IDLE', [0, 1, 2], Phaser.Timer.SECOND / 100, true);
     this.sprite.animations.add('RUN', [3, 4, 5, 6, 7, 8], Phaser.Timer.SECOND / 50, true);
-
     this.sprite.animations.play('IDLE');
-    group.add(this.sprite);
+    evilGroup.add(this.sprite);
+
+    this.normalSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, "normal_coin");
+    normalGroup.add(this.normalSprite);
+    this.normalSprite.animations.add('IDLE', [0, 1, 2, 3, 4, 5], Phaser.Timer.SECOND / 70, true);
+    this.normalSprite.animations.play('IDLE');
 
     this.leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
     this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -80,6 +88,11 @@ export class PlayableCoin {
       y: this.position.y * TILE_SIZE
     }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
 
+    game.add.tween(this.normalSprite).to({
+      x: this.position.x * TILE_SIZE,
+      y: this.position.y * TILE_SIZE
+    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+
     game.add.tween(this.shadow).to({
       x: this.position.x * TILE_SIZE,
       y: this.position.y * TILE_SIZE
@@ -118,5 +131,27 @@ export class PlayableCoin {
     this.sprite.position.y = this.position.y * TILE_SIZE;
     this.shadow.position.x = this.position.x * TILE_SIZE;
     this.shadow.position.y = this.position.y * TILE_SIZE;
+  }
+
+  kill() {
+    this.dead = true;
+    this.sprite.alpha = 0;
+    this.normalSprite.alpha = 0;
+    this.shadow.alpha = 0;
+  }
+
+  getPosition() {
+    return this.position;
+  }
+
+  isAlive() {
+    return !this.dead;
+  }
+
+  ressussite() {
+    this.sprite.alpha = 1;
+    this.normalSprite.alpha = 1;
+    this.shadow.alpha = 1;
+    this.dead = false;
   }
 }

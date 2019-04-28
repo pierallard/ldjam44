@@ -50,6 +50,7 @@ export abstract class Stage extends Phaser.State {
     this.coinCounter = new CoinCounter(this.coins);
     this.timer = new Timer();
     this.messageDisplayer = new MessageDisplayer();
+    this.player.setPlayableCoin(this.playableCoin);
   }
 
   abstract onGameWin();
@@ -72,13 +73,13 @@ export abstract class Stage extends Phaser.State {
 
     /** Create items */
     this.level.create(game, this.normalGroup, this.evilGroup);
-    this.player.create(game, this.normalGroup);
+    this.playableCoin.create(game, this.evilGroup, this.normalGroup);
     this.coins.forEach(coin => {
       coin.create(game, this.normalGroup, this.evilGroup);
     });
     this.coinCounter.create(game, this.interfaceGroup);
     this.evilPlayer.create(game, this.evilGroup);
-    this.playableCoin.create(game, this.evilGroup);
+    this.player.create(game, this.normalGroup);
     this.timer.create(game, this.interfaceGroup);
 
     game.world.setBounds(0, 0, this.level.getWidth() * TILE_SIZE, this.level.getHeight() * TILE_SIZE);
@@ -125,6 +126,7 @@ export abstract class Stage extends Phaser.State {
       this.coins.forEach((coin) => {
         coin.ressussite();
       });
+      this.playableCoin.ressussite();
       this.isEvilMode = true;
       this.timer.setRemainingTime(this.level.getRemainingTime());
       this.refreshGroups(game);
@@ -137,6 +139,7 @@ export abstract class Stage extends Phaser.State {
       this.coins.forEach((coin) => {
         coin.ressussite();
       });
+      this.playableCoin.ressussite();
     }
 
     this.player.update(game, this.level);

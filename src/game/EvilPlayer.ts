@@ -202,7 +202,7 @@ export class EvilPlayer implements Positionable {
     this.shadow.position.y = this.position.y * TILE_SIZE;
   }
 
-  runKillAnimation(game: Phaser.Game, duration: number) {
+  playKillAnimationTimeboxed(game: Phaser.Game, duration: number) {
     this.normalPlayerIsKilling = true;
     this.playKill();
     game.time.events.add(duration, () => {

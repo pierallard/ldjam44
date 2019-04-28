@@ -144,7 +144,7 @@ export class Player {
     this.isMoving = true;
     this.sprite.animations.play('KILL');
     const duration = 0.5 * Phaser.Timer.SECOND;
-    this.evilPlayer.runKillAnimation(game, duration);
+    this.evilPlayer.playKillAnimationTimeboxed(game, duration);
     if (coin instanceof Coin) {
       coin.stopMoving(game, this.sprite.scale.x > 0);
     }

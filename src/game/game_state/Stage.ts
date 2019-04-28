@@ -187,6 +187,7 @@ export abstract class Stage extends Phaser.State {
           this.evilPlayer.setPosition(this.level.getOriginalPlayerPosition());
           this.evilPlayer.setVisible(false);
           this.stepCounter = 0;
+          this.evilPlayer.playIdle();
         });
 
       return;
@@ -220,7 +221,7 @@ export abstract class Stage extends Phaser.State {
       this.evilPlayer.playKill();
 
       const glitchDuration = Phaser.Timer.SECOND;
-      const killAnimationTime = 1.4 * Phaser.Timer.SECOND;
+      const killAnimationTime = 1.3 * Phaser.Timer.SECOND;
       game.time.events.add(killAnimationTime, () => {
         this.evilPlayer.playIdle();
         this.runSuperGlitch(game, glitchDuration);

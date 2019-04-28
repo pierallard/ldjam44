@@ -22,6 +22,8 @@ export abstract class Stage extends Phaser.State {
   protected coinCounter: CoinCounter;
   private isGlitching: boolean = false;
   private level: Level;
+  private music: Phaser.Sound;
+  private evilMusic: Phaser.Sound;
 
   constructor(level: Level) {
     super();
@@ -48,6 +50,11 @@ export abstract class Stage extends Phaser.State {
   abstract onGameOver();
 
   public create(game: Phaser.Game) {
+    this.music = this.game.add.audio('music');
+    this.evilMusic = this.game.add.audio('evil_music');
+    this.music.play();
+    this.evilMusic.play();
+
     /** Create groups */
     this.evilGroup = game.add.group(null, "EVIL");
     this.normalGroup = game.add.group(null, "NORMAL");

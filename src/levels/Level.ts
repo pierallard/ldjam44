@@ -113,6 +113,6 @@ export class Level {
   }
 
   getRemainingTime() {
-    return 20;
+    return 30;
   }
 }

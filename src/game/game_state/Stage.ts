@@ -56,12 +56,13 @@ export abstract class Stage extends Phaser.State {
   abstract onGameOver();
 
   public create(game: Phaser.Game) {
-    this.music = this.game.add.audio('music');
-    this.evilMusic = this.game.add.audio('evil_music');
-    this.evilMusic.volume = 0;
-    this.music.play();
-    this.evilMusic.play();
-
+    if (!this.music) {
+        this.music = this.game.add.audio('music');
+        this.evilMusic = this.game.add.audio('evil_music');
+        this.evilMusic.volume = 0;
+        this.music.play();
+        this.evilMusic.play();
+    }
     /** Create groups */
     this.evilGroup = game.add.group(null, "EVIL");
     this.normalGroup = game.add.group(null, "NORMAL");
@@ -144,6 +145,7 @@ export abstract class Stage extends Phaser.State {
   };
 
   updateEvilMode = (game: Game) => {
+    this.refreshGroups(game);
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
       this.onGameOver();
       this.timer.setRemainingTime(this.level.getRemainingTime());

@@ -1,6 +1,7 @@
 import Point from "../game/Point";
 import { Tile } from "../game/Tile";
 import {Bloc} from "../game/Bloc";
+import {Bush} from "../game/Bush";
 
 export class Level {
   private grid: number[][];
@@ -41,6 +42,9 @@ export class Level {
             break;
           case 1:
             this.tiles.push(new Bloc(new Point(x, y)));
+            break;
+          case 2:
+            this.tiles.push(new Bush(new Point(x, y)));
             break;
         }
       }

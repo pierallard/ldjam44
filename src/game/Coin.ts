@@ -5,6 +5,7 @@ import {Level} from "../levels/Level";
 import {Positionable} from "./Positionable";
 import Tween = Phaser.Tween;
 import TimerEvent = Phaser.TimerEvent;
+import {EvilPlayer} from "./EvilPlayer";
 
 export class Coin {
   static SCARED_DISTANCE = 5;
@@ -56,10 +57,12 @@ export class Coin {
     this.sprite.animations.play('IDLE');
 
     this.evilSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, "evil_coin");
+    this.evilSprite.anchor.set(0.3, 0.3);
     evilGroup.add(this.evilSprite);
     this.evilSprite.animations.add('IDLE', [0, 1, 2, 3, 4, 5, 6], Phaser.Timer.SECOND / 70, true);
     this.evilSprite.animations.add('RUN', [7, 8, 9, 10, 11, 12], Phaser.Timer.SECOND / 70, true);
     this.evilSprite.animations.add('SCARED', [13, 14], Phaser.Timer.SECOND / 70, true);
+    this.evilSprite.animations.add('DIE', [15, 16, 17, 18, 18, 19, 20, 21, 22, 23, 24], Phaser.Timer.SECOND / 70, false);
     this.evilSprite.animations.play('IDLE');
   }
 
@@ -107,10 +110,10 @@ export class Coin {
       this.sprite.scale.set(1, 1);
       this.sprite.anchor.set(0, 0);
       this.evilSprite.scale.set(1, 1);
-      this.evilSprite.anchor.set(0, 0);
+      this.evilSprite.anchor.set(0.3, 0.3);
     } else if (this.position.x > position.x) {
       this.evilSprite.scale.set(-1, 1);
-      this.evilSprite.anchor.set(1, 0);
+      this.evilSprite.anchor.set(0.7, 0.3);
     }
 
     [this.sprite, this.evilSprite, this.shadowEvil, this.shadow].forEach((sprite) => {
@@ -156,8 +159,10 @@ export class Coin {
 
   kill() {
     this.sprite.alpha = 0;
-    this.evilSprite.alpha = 0;
+    this.evilSprite.animations.play('DIE');
+    this.evilSprite.alpha = 1;
     this.shadow.alpha = 0;
+    this.shadowEvil.alpha = 0;
     this.isDead = true;
     this.isMoving = true;
   }
@@ -174,15 +179,25 @@ export class Coin {
     const gapX = 14 * (rightOriented ? 1 : -1);
     const gapY = 3;
 
+    const moveBackTime = 0.3 * Phaser.Timer.SECOND ;
     [this.sprite, this.evilSprite, this.shadow, this.shadowEvil].forEach((sprite) => {
       game.add.tween(sprite).to({
         x: this.position.x * TILE_SIZE + gapX,
         y: this.position.y * TILE_SIZE + gapY
-      }, 0.3 * Phaser.Timer.SECOND - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+      }, moveBackTime, Phaser.Easing.Default, true);
     });
+    game.add.tween(this.evilSprite).to({
+      alpha: 0,
+    }, moveBackTime - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
+    game.time.events.add(moveBackTime, () => {
+      this.evilSprite.alpha = 0;
+    })
   }
 
   private playerIsClose() {
+    if (this.player instanceof EvilPlayer && !this.player.visible) {
+      return false;
+    }
     return Coin.dist(this.player.getPosition(), this.position) < Coin.SCARED_DISTANCE;
   }
 
@@ -192,8 +207,8 @@ export class Coin {
 
   ressussitate() {
     this.sprite.alpha = 1;
-    this.evilSprite.alpha = 1;
     this.shadow.alpha = 1;
+    this.shadowEvil.alpha = 1;
     this.isDead = false;
     this.isMoving = false;
   }

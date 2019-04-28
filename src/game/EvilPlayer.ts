@@ -19,7 +19,7 @@ export class EvilPlayer implements Positionable {
   private shadow: Sprite;
   private coins: Coin[];
   private normalPlayerIsKilling: boolean = false;
-  private visible: boolean;
+  visible: boolean;
   canMove: boolean;
 
   private path: Path = null;

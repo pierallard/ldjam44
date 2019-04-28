@@ -123,6 +123,7 @@ export class PlayableCoin {
 
   kill() {
     this.dead = true;
+    this.sprite.animations.play('DIE');
     this.sprite.alpha = 0;
     this.normalSprite.alpha = 0;
     this.shadow.alpha = 0;

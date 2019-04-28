@@ -135,6 +135,7 @@ export class Player {
   }
 
   setPosition(point: Point) {
+    this.isMoving = false;
     this.position = point;
     this.sprite.position.x = this.position.x * TILE_SIZE;
     this.sprite.position.y = this.position.y * TILE_SIZE;

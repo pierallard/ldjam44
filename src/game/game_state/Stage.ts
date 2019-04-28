@@ -1,6 +1,6 @@
 import { js as EasyStar } from "easystarjs";
 import { TILE_SIZE } from "../../app";
-import { Level } from "../../levels/Level";
+import {Level} from "../../levels/Level";
 import { Coin } from "../Coin";
 import { CoinCounter } from "../CoinCounter";
 import { EvilPlayer } from "../EvilPlayer";
@@ -22,9 +22,11 @@ export abstract class Stage extends Phaser.State {
   protected coinCounter: CoinCounter;
   private coinPositions: Point[];
   private isGlitching: boolean = false;
+  private level: Level;
 
-  constructor(private level: Level) {
+  constructor(level: Level) {
     super();
+    this.level = level;
 
     this.coinPositions = [];
     let tries = 1000;
@@ -109,10 +111,8 @@ export abstract class Stage extends Phaser.State {
       this.glitch(game);
     }
 
-    const spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    if (spaceKey.justDown) {
-      this.isCoinMode = !this.isCoinMode;
-      this.refreshGroups(game);
+    if (game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).justDown) {
+      this.glitch(game, false);
     }
 
     if (this.isCoinMode) {
@@ -176,9 +176,9 @@ export abstract class Stage extends Phaser.State {
     return true;
   };
 
-  private glitch(game: Phaser.Game) {
-    this.isGlitching = true;
-    if (this.isCoinMode) {
+  private glitch(game: Phaser.Game, unglichRandom: boolean = true) {
+    this.isGlitching = !this.isGlitching;
+    if (this.normalGroup.alpha === 0) {
       this.normalGroup.alpha = 1;
       this.evilGroup.alpha = 0;
     } else {
@@ -186,15 +186,17 @@ export abstract class Stage extends Phaser.State {
       this.evilGroup.alpha = 1;
     }
 
-    game.time.events.add(Math.random() * Phaser.Timer.SECOND / 10, () => {
-      this.isGlitching = false;
-      if (this.isCoinMode) {
-        this.normalGroup.alpha = 0;
-        this.evilGroup.alpha = 1;
-      } else {
-        this.normalGroup.alpha = 1;
-        this.evilGroup.alpha = 0;
-      }
-    }, this)
+    if (unglichRandom) {
+      game.time.events.add(Math.random() * Phaser.Timer.SECOND / 10, () => {
+        this.isGlitching = !this.isGlitching;
+        if (this.isCoinMode) {
+          this.normalGroup.alpha = 0;
+          this.evilGroup.alpha = 1;
+        } else {
+          this.normalGroup.alpha = 1;
+          this.evilGroup.alpha = 0;
+        }
+      }, this)
+    }
   }
 }

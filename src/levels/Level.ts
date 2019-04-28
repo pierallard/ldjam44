@@ -1,20 +1,37 @@
 import Point from "../game/Point";
 import { Tile } from "../game/Tile";
+import {Bloc} from "../game/Bloc";
 
-export abstract class Level {
+export class Level {
   protected tiles: Tile[] = [];
 
   protected width: number;
   protected height: number;
 
-  abstract getGrid: () => number[][];
-
   getWidth = () => this.width;
 
   getHeight = () => this.height;
 
-  constructor() {
+  private grid: number[][];
 
+  constructor(levelDescriptor: number[][]) {
+    this.grid = levelDescriptor;
+
+    for (let y = 0; y < this.grid.length; y++) {
+      for (let x = 0; x < this.grid[y].length; x++) {
+        switch (this.grid[y][x]) {
+          case 0:
+            this.tiles.push(new Tile(new Point(x, y)));
+            break;
+          case 1:
+            this.tiles.push(new Bloc(new Point(x, y)));
+            break;
+        }
+      }
+    }
+
+    this.width = this.grid[0].length;
+    this.height = this.grid.length;
   }
 
   create(
@@ -43,5 +60,9 @@ export abstract class Level {
         return this.tiles[i].isAllowedForCoin();
       }
     }
+  }
+
+  getGrid(): number[][] {
+    return this.grid;
   }
 }

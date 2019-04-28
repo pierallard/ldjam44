@@ -71,9 +71,8 @@ export class Coin {
         this.moveTo(game, level, sortedPositions[0]);
 
       }
-      return;
     } else {
-      if (Math.random() < 0.03) {
+      if (Math.random() < 0.3) {
         if (this.sprite.scale.x < 0) {
           this.sprite.scale.set(1, 1);
           this.sprite.anchor.set(0, 0);

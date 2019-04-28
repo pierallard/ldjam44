@@ -12,10 +12,11 @@ export class Tile {
   }
 
   create(game: Phaser.Game, normalGroup: Phaser.Group, evilGroup: Phaser.Group) {
-    this.normalSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground', Math.ceil(Math.random() * 2));
+    const random = Math.ceil(Math.random() * 2);
+    this.normalSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'basic_ground', random);
     normalGroup.add(this.normalSprite);
 
-    this.evilSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'evil_ground');
+    this.evilSprite = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'evil_ground', random);
     evilGroup.add(this.evilSprite);
   }
 

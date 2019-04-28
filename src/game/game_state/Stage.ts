@@ -89,7 +89,7 @@ export abstract class Stage extends Phaser.State {
     this.evilPlayer.setPosition(this.level.getOriginalPlayerPosition());
     this.playableCoin.setPosition(this.level.getOriginalPlayableCoinPosition());
     this.coins.forEach((coin, i) => {
-      coin.setPosition(this.level.getCoinPositions()[i]);
+      coin.reinitialize(this.level.getCoinPositions()[i]);
     });
     const durationMessage = 3 * Phaser.Timer.SECOND;
     this.timer.setRemainingTime(this.level.getRemainingTime() + durationMessage / Phaser.Timer.SECOND); // yeah, game jam
@@ -134,6 +134,9 @@ export abstract class Stage extends Phaser.State {
     }
     if (this.timer.isOver()) {
       this.game.state.restart(true);
+      this.coins.forEach((coin) => {
+        coin.ressussite();
+      });
     }
 
     this.player.update(game, this.level);

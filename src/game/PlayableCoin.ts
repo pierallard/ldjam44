@@ -21,6 +21,7 @@ export class PlayableCoin {
   }
 
   create(game: Phaser.Game, evilGroup: Phaser.Group, normalGroup: Phaser.Group) {
+    this.isMoving = false;
     this.dead = false;
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     evilGroup.add(this.shadow);

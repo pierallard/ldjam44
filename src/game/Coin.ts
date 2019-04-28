@@ -206,6 +206,8 @@ export class Coin {
     this.evilSprite.position.y = this.position.y * TILE_SIZE;
     this.shadow.position.x = this.position.x * TILE_SIZE;
     this.shadow.position.y = this.position.y * TILE_SIZE;
+    this.sprite.animations.play('IDLE');
+    this.evilSprite.animations.play('IDLE');
   }
 
   private runAway(level: Level, game: Phaser.Game) {

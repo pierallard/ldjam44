@@ -179,6 +179,9 @@ export abstract class Stage extends Phaser.State {
         () => {
           this.canInteract = true;
           this.isEvilMode = true;
+          this.coins.forEach((coin, i) => {
+            coin.reinitialize(this.level.getCoinPositions()[i]);
+          });
           this.playableCoin.ressussite();
           this.timer.setRemainingTime(null);
           this.evilPlayer.setPosition(this.level.getOriginalPlayerPosition());

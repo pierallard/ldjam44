@@ -14,7 +14,7 @@ import {MessageDisplayer} from "../MessageDisplayer";
 
 export abstract class Stage extends Phaser.State {
   static GLITCH_PROBA = 0.005;
-  static GLITCH_SECONDS = 0.4;
+  static GLITCH_SECONDS = 0.04;
 
   protected player: Player;
   protected coins: Coin[] = [];
@@ -168,6 +168,9 @@ export abstract class Stage extends Phaser.State {
   };
 
   private refreshGroups(game: Phaser.Game) {
+    if (this.isGlitching) {
+      return;
+    }
     if (this.isEvilMode) {
       this.normalGroup.alpha = 0;
       this.evilGroup.alpha = 1;

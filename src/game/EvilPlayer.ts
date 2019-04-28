@@ -176,7 +176,7 @@ export class EvilPlayer implements Positionable {
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
     this.playKill();
-    coin.stopMoving(game);
+    coin.stopMoving(game, this.sprite.scale.x > 0);
     game.time.events.add(Phaser.Timer.SECOND * 1, () => {
       this.sprite.animations.play('IDLE');
       this.isMoving = false;

@@ -84,20 +84,13 @@ export class PlayableCoin {
     }
     this.isMoving = true;
     this.position = position;
-    game.add.tween(this.sprite).to({
-      x: this.position.x * TILE_SIZE,
-      y: this.position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
 
-    game.add.tween(this.normalSprite).to({
-      x: this.position.x * TILE_SIZE,
-      y: this.position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
-
-    game.add.tween(this.shadow).to({
-      x: this.position.x * TILE_SIZE,
-      y: this.position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+    [this.sprite, this.normalSprite, this.shadow].forEach((sprite) => {
+      game.add.tween(sprite).to({
+        x: this.position.x * TILE_SIZE,
+        y: this.position.y * TILE_SIZE
+      }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+    });
 
     game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
       this.isMoving = false;
@@ -107,18 +100,6 @@ export class PlayableCoin {
   }
 
   private isMovingAllowed(position: Point, level: Level) {
-    if (position.x < 0) {
-      return false;
-    }
-    if (position.x >= level.getWidth()) {
-      return false;
-    }
-    if (position.y < 0) {
-      return false;
-    }
-    if (position.y >= level.getHeight()) {
-      return false;
-    }
     if (!level.isAllowedForCoin(position)) {
       return false;
     }

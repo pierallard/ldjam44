@@ -46,7 +46,8 @@ export class EvilPlayer implements Positionable {
 
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
     this.sprite.animations.add('RUN', [4, 5, 6, 7, 8, 9], Phaser.Timer.SECOND / 100, true);
-    this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], Phaser.Timer.SECOND / 100, true);
+    this.sprite.animations.add('WIN', [23, 24, 25], Phaser.Timer.SECOND / 150, true);
     this.sprite.animations.play('IDLE');
     this.sprite.anchor.set(0.3, 0.3);
 
@@ -247,6 +248,11 @@ export class EvilPlayer implements Positionable {
 
   playIdle() {
     this.sprite.animations.play('IDLE');
+  }
+
+  playWin()
+  {
+    this.sprite.animations.play('WIN');
   }
 
   setVisible(visible: boolean) {

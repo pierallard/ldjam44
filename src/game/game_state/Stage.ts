@@ -200,7 +200,7 @@ export abstract class Stage extends Phaser.State {
       this.evilPlayer.setHunderMode(false);
       this.playableCoin.stopSound();
       this.timer.setRemainingTime(this.level.getRemainingTime());
-      this.player.playIdle();
+      this.player.playLost();
 
       const messageLostDuration = 5 * Phaser.Timer.SECOND;
       this.messageDisplayer.display(game, "Argh, I have to improve my\n\nskills to catch these coins\n\nfaster!", messageLostDuration);
@@ -246,7 +246,7 @@ export abstract class Stage extends Phaser.State {
       const glitchDuration = Phaser.Timer.SECOND;
       const killAnimationTime = 1.3 * Phaser.Timer.SECOND;
       game.time.events.add(killAnimationTime, () => {
-        this.evilPlayer.playIdle();
+        this.evilPlayer.playWin();
         this.runSuperGlitch(game, glitchDuration);
       });
       game.time.events.add(glitchDuration + killAnimationTime, () => {

@@ -248,7 +248,7 @@ export abstract class Stage extends Phaser.State {
       const glitchDuration = Phaser.Timer.SECOND;
       const killAnimationTime = 1.3 * Phaser.Timer.SECOND;
       game.time.events.add(killAnimationTime, () => {
-        this.evilPlayer.playIdle();
+        this.evilPlayer.playWin();
         this.runSuperGlitch(game, glitchDuration);
       });
       game.time.events.add(glitchDuration + killAnimationTime, () => {

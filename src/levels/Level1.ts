@@ -41,6 +41,6 @@ export class Level1 extends Level {
   }
 
   getNormalMessage() {
-    return "Life is cool for a\n\nnaked amazon. Typical\n\ndaily currency hunt!"
+    return "Life is cool for a naked amazon.\n\nTypical daily currency hunt!"
   }
 }

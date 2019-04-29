@@ -7,6 +7,7 @@ import { js as EasyStar } from "easystarjs";
 import {Positionable} from "./Positionable";
 import {Coin} from "./Coin";
 import Game = Phaser.Game;
+import {SOUND, SoundManager} from "../SoundManager";
 
 type Path = { x: number; y: number }[];
 
@@ -43,7 +44,6 @@ export class EvilPlayer implements Positionable {
     this.sprite.animations.add('IDLE', [0, 1, 2, 3], Phaser.Timer.SECOND / 150, true);
     this.sprite.animations.add('RUN', [4, 5, 6, 7, 8, 9], Phaser.Timer.SECOND / 100, true);
     this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], Phaser.Timer.SECOND / 100, true);
-    //this.sprite.animations.add('KILL2', [15, 16, 17], Phaser.Timer.SECOND / 100, false);
     this.sprite.animations.play('IDLE');
     this.sprite.anchor.set(0.3, 0.3);
 
@@ -186,8 +186,16 @@ export class EvilPlayer implements Positionable {
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
     this.playKill();
+
+    SoundManager.play(SOUND.SWORD);
+    SoundManager.play(SOUND.OTHER_COIN_DEATH);
+    game.time.events.add(0.7 * Phaser.Timer.SECOND, () => {
+      SoundManager.play(SOUND.SWORD);
+      SoundManager.play(SOUND.OTHER_COIN_DEATH);
+    }, this);
+
     coin.stopMoving(game, this.sprite.scale.x > 0);
-    game.time.events.add(Phaser.Timer.SECOND * 1, () => {
+    game.time.events.add(Phaser.Timer.SECOND, () => {
       this.sprite.animations.play('IDLE');
       this.isMoving = false;
       coin.kill();

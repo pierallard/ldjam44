@@ -9,7 +9,7 @@ import { Player } from "../Player";
 import { Game } from "phaser-ce";
 import {Timer} from "../Timer";
 import {MessageDisplayer} from "../MessageDisplayer";
-import {SoundManager} from "../../SoundManager";
+import {SOUND, SoundManager} from "../../SoundManager";
 
 export abstract class Stage extends Phaser.State {
   static GLITCH_PROBA = 0.005;
@@ -48,6 +48,7 @@ export abstract class Stage extends Phaser.State {
 
     this.playableCoin = new PlayableCoin(this.level.getOriginalPlayableCoinPosition());
     this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.level.getOriginalPlayerPosition());
+    this.playableCoin.setPlayer(this.evilPlayer);
     this.player = new Player(this.level.getOriginalPlayerPosition());
     this.player.setEvilPlayer(this.evilPlayer);
     this.coins = [];
@@ -143,6 +144,7 @@ export abstract class Stage extends Phaser.State {
       });
 
       this.canInteract = false;
+      this.playableCoin.stopSound();
 
       const winMessageDuration = 3 * Phaser.Timer.SECOND;
       const superGlitchDuration = 2 * Phaser.Timer.SECOND;
@@ -186,6 +188,7 @@ export abstract class Stage extends Phaser.State {
     }
     if (this.timer.isOver()) {
       // LOST CONDITION FOR NORMAL MODE
+      this.playableCoin.stopSound();
       this.coins.forEach((coin) => {
         coin.ressussitate();
       });
@@ -208,9 +211,16 @@ export abstract class Stage extends Phaser.State {
   updateEvilMode = (game: Game) => {
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
       // LOST CONDITION FOR EVIL MODE
-
+      this.playableCoin.stopSound();
       this.canInteract = false;
       this.evilPlayer.playKill();
+
+      SoundManager.play(SOUND.SWORD);
+      SoundManager.play(SOUND.EVIL_COIN_DEATH);
+      game.time.events.add(0.7 * Phaser.Timer.SECOND, () => {
+        SoundManager.play(SOUND.SWORD);
+        SoundManager.play(SOUND.EVIL_COIN_DEATH);
+      }, this);
 
       const glitchDuration = Phaser.Timer.SECOND;
       const killAnimationTime = 1.3 * Phaser.Timer.SECOND;
@@ -228,6 +238,7 @@ export abstract class Stage extends Phaser.State {
     }
     if (this.timer.isOver()) {
       // WIN CONDITION FOR EVIL MODE
+      this.playableCoin.stopSound();
       this.onGameWin();
       this.timer.setRemainingTime(this.level.getRemainingTime());
 
@@ -295,14 +306,12 @@ export abstract class Stage extends Phaser.State {
       this.normalGroup.alpha = 0;
       this.evilGroup.alpha = 1;
 
-      SoundManager.changeMusicVolume(0);
-      SoundManager.changeEvilMusicVolume(1);
+      SoundManager.setEvil(true);
     } else {
       this.normalGroup.alpha = 1;
       this.evilGroup.alpha = 0;
 
-      SoundManager.changeMusicVolume(1);
-      SoundManager.changeEvilMusicVolume(0);
+      SoundManager.setEvil(false);
     }
   }
 
@@ -320,7 +329,7 @@ export abstract class Stage extends Phaser.State {
 
   private runSuperGlitch(game: Phaser.Game, superGlitchDuration) {
     for (let i = 0; i < 40; i++) {
-      game.time.events.add(Math.random() * superGlitchDuration, () => {
+      game.time.events.add(Math.random() * (superGlitchDuration - 0.1 * Phaser.Timer.SECOND), () => {
         if (this.isGlitching) { return; }
         const time = Math.random() * 0.05 * Phaser.Timer.SECOND;
         this.glitch(game, true, time);

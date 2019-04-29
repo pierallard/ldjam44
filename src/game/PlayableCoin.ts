@@ -2,6 +2,9 @@ import Sprite = Phaser.Sprite;
 import Point from "./Point";
 import {TILE_SIZE} from "../app";
 import { Level } from "../levels/Level";
+import {SOUND, SoundManager} from "../SoundManager";
+import {EvilPlayer} from "./EvilPlayer";
+import {Coin} from "./Coin";
 
 export class PlayableCoin {
   private sprite: Sprite;
@@ -14,6 +17,9 @@ export class PlayableCoin {
   private shadow: Sprite;
   private normalSprite: Sprite;
   private dead: boolean;
+  private player;
+  private soundFear: boolean;
+  private runSound: Phaser.Sound;
 
   constructor(position: Point) {
     this.position = position;
@@ -21,6 +27,12 @@ export class PlayableCoin {
   }
 
   create(game: Phaser.Game, evilGroup: Phaser.Group, normalGroup: Phaser.Group) {
+    this.runSound = game.add.sound('evil_coin_fear_7');
+    this.runSound.loop = true;
+    this.runSound.play();
+    this.runSound.volume = 0;
+
+    this.soundFear = false;
     this.isMoving = false;
     this.dead = false;
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
@@ -48,9 +60,23 @@ export class PlayableCoin {
     game.camera.follow(this.sprite);
   }
 
+  setPlayer(player) {
+    this.player = player;
+  }
+
   update(game: Phaser.Game, level): boolean {
     if (this.isMoving) {
       return false;
+    }
+
+    if (this.playerIsClose()) {
+      if (!this.soundFear) {
+        SoundManager.play(SOUND.EVIL_COIN_FEAR);
+        this.soundFear = true;
+        game.time.events.add(Phaser.Timer.SECOND * 2, () => {
+          this.soundFear = false;
+        }, this);
+      }
     }
 
     if (this.leftKey.isDown) {
@@ -74,7 +100,16 @@ export class PlayableCoin {
     return false;
   }
 
+  private playerIsClose() {
+    if (this.player instanceof EvilPlayer && !this.player.visible) {
+      return false;
+    }
+    return Coin.dist(this.player.getPosition(), this.position) < Coin.SCARED_DISTANCE;
+  }
+
+
   private moveTo(game: Phaser.Game, position: Point, level) {
+    this.runSound.volume = 1;
     if (!this.isMovingAllowed(position, level)) {
       return;
     }
@@ -102,6 +137,7 @@ export class PlayableCoin {
       this.isMoving = false;
       this.sprite.position.x = this.position.x * TILE_SIZE;
       this.sprite.position.y = this.position.y * TILE_SIZE;
+      this.runSound.volume = 0;
     }, this)
   }
 
@@ -142,5 +178,9 @@ export class PlayableCoin {
     this.normalSprite.alpha = 1;
     this.shadow.alpha = 1;
     this.dead = false;
+  }
+
+  stopSound() {
+    this.runSound.volume = 0;
   }
 }

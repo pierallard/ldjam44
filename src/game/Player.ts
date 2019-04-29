@@ -6,6 +6,7 @@ import {Coin} from "./Coin";
 import Game = Phaser.Game;
 import {EvilPlayer} from "./EvilPlayer";
 import {PlayableCoin} from "./PlayableCoin";
+import {SOUND, SoundManager} from "../SoundManager";
 
 export class Player {
   private sprite: Sprite;
@@ -145,6 +146,7 @@ export class Player {
     this.sprite.animations.play('KILL');
     const duration = 0.5 * Phaser.Timer.SECOND;
     this.evilPlayer.playKillAnimationTimeboxed(game, duration);
+    SoundManager.play(SOUND.PICK_COIN);
     if (coin instanceof Coin) {
       coin.stopMoving(game, this.sprite.scale.x > 0);
     }
@@ -152,7 +154,7 @@ export class Player {
       this.sprite.animations.play('IDLE');
       this.isMoving = false;
       coin.kill();
-    }, this)
+    }, this);
   }
 
   setPosition(point: Point) {

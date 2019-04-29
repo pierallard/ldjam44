@@ -10,7 +10,45 @@ export default class Preload extends Phaser.State {
   }
 
   private loadAudio() {
+    this.game.load.audio('music', 'dist/assets/musics/main_theme_chill.mp3');
+    this.game.load.audio('evil_music', 'dist/assets/musics/main_theme_rock.mp3');
+    this.game.load.audio('evil_coin_death_1', 'dist/assets/sfx/evil_coin_death_1.mp3');
+    this.game.load.audio('evil_coin_death_2', 'dist/assets/sfx/evil_coin_death_2.mp3');
+    this.game.load.audio('evil_coin_death_3', 'dist/assets/sfx/evil_coin_death_3.mp3');
+    this.game.load.audio('evil_coin_death_4', 'dist/assets/sfx/evil_coin_death_4.mp3');
+    this.game.load.audio('evil_coin_fear_1', 'dist/assets/sfx/evil_coin_fear_1.mp3');
+    this.game.load.audio('evil_coin_fear_2', 'dist/assets/sfx/evil_coin_fear_2.mp3');
+    this.game.load.audio('evil_coin_fear_3', 'dist/assets/sfx/evil_coin_fear_3.mp3');
+    this.game.load.audio('evil_coin_fear_4', 'dist/assets/sfx/evil_coin_fear_4.mp3');
+    this.game.load.audio('evil_coin_fear_5', 'dist/assets/sfx/evil_coin_fear_5.mp3');
+    this.game.load.audio('evil_coin_fear_6', 'dist/assets/sfx/evil_coin_fear_6.mp3');
+    this.game.load.audio('evil_coin_fear_7', 'dist/assets/sfx/evil_coin_fear_7.mp3');
+    this.game.load.audio('evil_coin_push_1', 'dist/assets/sfx/evil_coin_push_1.mp3');
+    this.game.load.audio('evil_coin_push_2', 'dist/assets/sfx/evil_coin_push_2.mp3');
+    this.game.load.audio('evil_coin_push_3', 'dist/assets/sfx/evil_coin_push_3.mp3');
+    this.game.load.audio('other_coin_death_1', 'dist/assets/sfx/other_coin_death_1.mp3');
+    this.game.load.audio('other_coin_death_2', 'dist/assets/sfx/other_coin_death_2.mp3');
+    this.game.load.audio('other_coin_death_3', 'dist/assets/sfx/other_coin_death_3.mp3');
+    this.game.load.audio('other_coin_fear_1', 'dist/assets/sfx/other_coin_fear_1.mp3');
+    this.game.load.audio('other_coin_fear_2', 'dist/assets/sfx/other_coin_fear_2.mp3');
+    this.game.load.audio('other_coin_fear_3', 'dist/assets/sfx/other_coin_fear_3.mp3');
+    this.game.load.audio('other_coin_fear_4', 'dist/assets/sfx/other_coin_fear_4.mp3');
+    this.game.load.audio('other_coin_fear_5', 'dist/assets/sfx/other_coin_fear_5.mp3');
+    this.game.load.audio('other_coin_fear_6', 'dist/assets/sfx/other_coin_fear_6.mp3');
+    this.game.load.audio('other_coin_fear_7', 'dist/assets/sfx/other_coin_fear_7.mp3');
+    this.game.load.audio('other_coin_hurt_1', 'dist/assets/sfx/other_coin_hurt_1.mp3');
+    this.game.load.audio('other_coin_hurt_2', 'dist/assets/sfx/other_coin_hurt_2.mp3');
+    this.game.load.audio('pick_coin_1', 'dist/assets/sfx/pick_coin_1.mp3');
+    this.game.load.audio('pick_coin_2', 'dist/assets/sfx/pick_coin_2.mp3');
+    this.game.load.audio('pick_coin_3', 'dist/assets/sfx/pick_coin_3.mp3');
+    this.game.load.audio('sword_1', 'dist/assets/sfx/sword_1.mp3');
+    this.game.load.audio('sword_2', 'dist/assets/sfx/sword_2.mp3');
+    this.game.load.audio('sword_3', 'dist/assets/sfx/sword_3.mp3');
+    this.game.load.audio('sword_4', 'dist/assets/sfx/sword_4.mp3');
+    this.game.load.audio('sword_5', 'dist/assets/sfx/sword_5.mp3');
+    this.game.load.audio('sword_6', 'dist/assets/sfx/sword_6.mp3');
   }
+
 
   private loadImages() {
     this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12);
@@ -28,8 +66,6 @@ export default class Preload extends Phaser.State {
     this.game.load.spritesheet('coin', 'dist/assets/images/coin.png', 24, 24);
     this.game.load.spritesheet('evil_coin', 'dist/assets/images/evil_coin.png', 60, 60);
     this.game.load.image('shadow', 'dist/assets/images/shadow.png');
-    this.game.load.audio('music', 'dist/assets/musics/main_theme_chill.mp3');
-    this.game.load.audio('evil_music', 'dist/assets/musics/main_theme_rock.mp3');
   }
 
   private loadFonts() {

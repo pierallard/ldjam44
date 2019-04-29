@@ -6,6 +6,7 @@ import {Positionable} from "./Positionable";
 import Tween = Phaser.Tween;
 import TimerEvent = Phaser.TimerEvent;
 import {EvilPlayer} from "./EvilPlayer";
+import {SOUND, SoundManager} from "../SoundManager";
 
 export class Coin {
   static SCARED_DISTANCE = 5;
@@ -23,6 +24,7 @@ export class Coin {
   private tweens: Tween[];
   private timeEvents: TimerEvent[];
   private shadowEvil: Sprite;
+  private soundFear: boolean;
 
   constructor(id: number, position: Point, player: Positionable, coins: Coin[]) {
     this.id = id;
@@ -43,6 +45,7 @@ export class Coin {
     this.timeEvents = [];
     this.isDead = false;
     this.isMoving = false;
+    this.soundFear = false;
 
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     this.shadow.anchor.set(0.1, 0.1);
@@ -74,7 +77,23 @@ export class Coin {
       return;
     }
 
+    if (!this.soundFear && Math.random() < 0.01) {
+      SoundManager.play(SOUND.OTHER_COIN_FEAR, 0.2);
+      this.soundFear = true;
+      game.time.events.add(Phaser.Timer.SECOND * 2, () => {
+        this.soundFear = false;
+      }, this);
+    }
+
     if (this.playerIsClose()) {
+      if (!this.soundFear && Math.random() < 0.5) {
+        SoundManager.play(SOUND.OTHER_COIN_FEAR);
+        this.soundFear = true;
+        game.time.events.add(Phaser.Timer.SECOND * 2, () => {
+          this.soundFear = false;
+        }, this);
+      }
+
       if (Math.random() < Coin.PROBA_FUITE) {
         this.runAway(level, game);
         return;
@@ -150,7 +169,7 @@ export class Coin {
     return true;
   }
 
-  private static dist(playerPosition: Point, position: Point) {
+  static dist(playerPosition: Point, position: Point) {
     return Math.sqrt(
       (playerPosition.x - position.x) * (playerPosition.x - position.x) +
       (playerPosition.y - position.y) * (playerPosition.y - position.y)

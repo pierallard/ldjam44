@@ -71,8 +71,6 @@ export abstract class Stage extends Phaser.State {
   public create(game: Phaser.Game) {
     this.canInteract = true;
 
-    SoundManager.create(game);
-
     /** Create groups */
     this.evilGroup = game.add.group(null, "EVIL");
     this.normalGroup = game.add.group(null, "NORMAL");

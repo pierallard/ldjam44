@@ -6,6 +6,7 @@ import Stage1 from "./game/game_state/Stage1";
 import Stage2 from "./game/game_state/Stage2";
 import Stage3 from "./game/game_state/Stage3";
 import {Credits} from "./game/game_state/Credits";
+import {Logo} from "./game/game_state/Logo";
 
 export const SCALE = 4;
 const GAME_WIDTH = 1200;
@@ -32,6 +33,7 @@ class SimpleGame extends Phaser.Game {
         this.state.add('Stage2', Stage2);
         this.state.add('Stage3', Stage3);
         this.state.add('Credits', Credits);
+        this.state.add('Logo', Logo);
         this.state.start('Boot');
     }
 }

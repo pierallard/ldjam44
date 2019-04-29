@@ -21,7 +21,7 @@ export default class Preload extends Phaser.State {
     this.graphics.drawRect(this.game.world.centerX - 74.5, this.game.world.centerY + 1.5, 148 * (progress / 100), 8);
 
     if (progress >= 100) {
-      this.game.state.start('Stage1');
+      this.game.state.start('Logo');
     }
   };
 
@@ -81,6 +81,7 @@ export default class Preload extends Phaser.State {
     this.game.load.spritesheet('coin', 'dist/assets/images/coin.png', 24, 24);
     this.game.load.spritesheet('evil_coin', 'dist/assets/images/evil_coin.png', 60, 60);
     this.game.load.image('shadow', 'dist/assets/images/shadow.png');
+    this.game.load.image('logo', 'dist/assets/images/logo1.png');
   }
 
   private loadFonts() {

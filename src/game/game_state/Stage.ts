@@ -25,7 +25,7 @@ export abstract class Stage extends Phaser.State {
   protected coins: Coin[] = [];
   protected playableCoin: PlayableCoin;
   protected evilPlayer: EvilPlayer;
-  protected isEvilMode: boolean = false;
+  protected isEvilMode: boolean = true;
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
   protected interfaceGroup: Phaser.Group;
@@ -266,26 +266,60 @@ export abstract class Stage extends Phaser.State {
       this.evilPlayer.playIdle();
       this.playableCoin.playIdle();
 
-      const waitTime = Phaser.Timer.SECOND;
-      const glitchDuration = Phaser.Timer.SECOND;
-      const blackTime = Phaser.Timer.SECOND * 2;
+      if (this.level instanceof Level3)
+      {
+        this.playableCoin.unfollowCamera(game);
+        this.evilPlayer.followCamera(game);
 
-      game.time.events.add(waitTime, () => {
-        this.runSuperGlitch(game, glitchDuration);
-      });
+        const waitTime = Phaser.Timer.SECOND;
+        const glitchDuration = 3 * Phaser.Timer.SECOND;
+        const blackTime = Phaser.Timer.SECOND * 2;
+        const fallTime = Phaser.Timer.SECOND * 5;
 
-      game.time.events.add(waitTime + glitchDuration, () => {
-        [this.interfaceGroup, this.evilGroup, this.normalGroup].forEach((group) => {
-          game.add.tween(group).to({
-            alpha: 0
-          }, blackTime, Phaser.Easing.Default, true);
+        this.evilPlayer.playFall();
+
+        game.time.events.add(4 * Phaser.Timer.SECOND, () => {
+          this.evilPlayer.playFallen();
+          this.runSuperGlitch(game, glitchDuration);
         });
-      });
 
-      game.time.events.add(waitTime + glitchDuration + blackTime * 1.5, () => {
-        this.onGameWin();
-        this.canInteract = true;
-      });
+        game.time.events.add(waitTime + fallTime + glitchDuration, () => {
+          [this.interfaceGroup, this.evilGroup, this.normalGroup].forEach((group) => {
+            game.add.tween(group).to({
+              alpha: 0
+            }, blackTime, Phaser.Easing.Default, true);
+          });
+        });
+
+        game.time.events.add(waitTime + glitchDuration + fallTime + blackTime * 1.5, () => {
+          this.onGameWin();
+          this.canInteract = true;
+        });
+      }
+
+      if (!(this.level instanceof Level3))
+      {
+        const waitTime = Phaser.Timer.SECOND;
+        const glitchDuration = Phaser.Timer.SECOND;
+        const blackTime = Phaser.Timer.SECOND * 2;
+
+        game.time.events.add(waitTime, () => {
+          this.runSuperGlitch(game, glitchDuration + 4);
+        });
+
+        game.time.events.add(waitTime + glitchDuration, () => {
+          [this.interfaceGroup, this.evilGroup, this.normalGroup].forEach((group) => {
+            game.add.tween(group).to({
+              alpha: 0
+            }, blackTime, Phaser.Easing.Default, true);
+          });
+        });
+
+        game.time.events.add(waitTime + glitchDuration + blackTime * 1.5, () => {
+          this.onGameWin();
+          this.canInteract = true;
+        });
+      }
 
       return;
     }

@@ -60,6 +60,11 @@ export class PlayableCoin {
     game.camera.follow(this.sprite);
   }
 
+  unfollowCamera(game: Phaser.Game)
+  {
+    game.camera.unfollow();
+  }
+
   setPlayer(player) {
     this.player = player;
   }

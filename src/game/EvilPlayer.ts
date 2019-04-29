@@ -48,6 +48,8 @@ export class EvilPlayer implements Positionable {
     this.sprite.animations.add('RUN', [4, 5, 6, 7, 8, 9], Phaser.Timer.SECOND / 100, true);
     this.sprite.animations.add('KILL1', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], Phaser.Timer.SECOND / 100, true);
     this.sprite.animations.add('WIN', [23, 24, 25], Phaser.Timer.SECOND / 150, true);
+    this.sprite.animations.add('FALL', [26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46], Phaser.Timer.SECOND / 150, false);
+    this.sprite.animations.add('FALLEN', [47,48], Phaser.Timer.SECOND / 250, true);
     this.sprite.animations.play('IDLE');
     this.sprite.anchor.set(0.3, 0.3);
 
@@ -199,6 +201,10 @@ export class EvilPlayer implements Positionable {
     return null;
   }
 
+  followCamera(game: Phaser.Game) {
+    game.camera.follow(this.sprite);
+  }
+
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
     this.playKill();
@@ -253,6 +259,16 @@ export class EvilPlayer implements Positionable {
   playWin()
   {
     this.sprite.animations.play('WIN');
+  }
+
+  playFall()
+  {
+    this.sprite.animations.play('FALL');
+  }
+
+  playFallen()
+  {
+    this.sprite.animations.play('FALLEN');
   }
 
   setVisible(visible: boolean) {

@@ -22,17 +22,17 @@ export class Level3 extends Level {
       ],
       new Point(4, 11), // hero
       [ // coins
-        new Point(1, 1),
-        new Point(11, 1),
-        new Point(12, 1),
-        new Point(11, 2),
-        new Point(12, 2),
-        new Point(7, 3),
-        new Point(1, 7),
-        new Point(5, 8),
-        new Point(12, 9),
-        new Point(7, 10),
-        new Point(1, 11),
+        // new Point(1, 1),
+        // new Point(11, 1),
+        // new Point(12, 1),
+        // new Point(11, 2),
+        // new Point(12, 2),
+        // new Point(7, 3),
+        // new Point(1, 7),
+        // new Point(5, 8),
+        // new Point(12, 9),
+        // new Point(7, 10),
+        // new Point(1, 11),
       ],
       new Point(9, 6) // playable coin
     );
@@ -47,7 +47,7 @@ export class Level3 extends Level {
   }
 
   getRemainingTime() {
-    return 32;
+    return 4;
   }
 
   shouldGlitch() {

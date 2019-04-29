@@ -123,7 +123,7 @@ export class Level {
   }
 
   getRemainingTime() {
-    return 30;
+    return 5;
   }
 
   shouldGlitch() {

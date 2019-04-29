@@ -22,10 +22,7 @@ export class Credits extends State {
     this.texts.push('');
     this.texts.push('');
     this.texts.push('A game designed for the Ludum Dare 44, by');
-    this.texts.push('docteurklein');
-    this.texts.push('grena');
-    this.texts.push('pchasle');
-    this.texts.push('pierallard');
+    this.texts.push('docteurklein + grena + pchasle + pierallard');
     this.texts.push('');
     this.texts.push('Special thanks for Nao and Nono');
     this.texts.push('for the running afraid coins!');
@@ -41,10 +38,12 @@ export class Credits extends State {
   }
 
   create(game: Game) {
+    this.camera.unfollow();
+    this.camera.setPosition(0, 0);
     this.phaserTexts = [];
     this.texts.forEach((text, i) => {
-      const t = game.add.bitmapText(0, i * 10 + this.game.world.centerY - 30, "Carrier Command", text, i === 0 ? 10 : 5);
-      t.x = this.game.world.centerX - (t.width / 2);
+      const t = game.add.bitmapText(0, i * 10 + this.game.height / 2 - 30, "Carrier Command", text, i === 0 ? 10 : 5);
+      t.x = this.game.width / 2 - (t.width / 2);
       this.phaserTexts.push(t);
     });
 

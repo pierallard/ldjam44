@@ -20,7 +20,6 @@ export class Level1 extends Level {
       new Point(1, 1), // hero
       [ // coins
         new Point(7, 1),
-        new Point(10, 1),
         new Point(3, 3),
         new Point(7, 4),
         new Point(9, 5),

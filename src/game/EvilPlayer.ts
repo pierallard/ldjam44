@@ -54,6 +54,7 @@ export class EvilPlayer implements Positionable {
   }
 
   update(game: Phaser.Game, level: Level) {
+    console.log('hunter ' + this.hunterMode);
     if (!this.visible) {
       return;
     }

@@ -86,7 +86,7 @@ export class Coin {
     }
 
     if (this.playerIsClose()) {
-      if (!this.soundFear && Math.random() < 0.5) {
+      if (!this.soundFear && Math.random() < 0.3) {
         SoundManager.play(SOUND.OTHER_COIN_FEAR);
         this.soundFear = true;
         game.time.events.add(Phaser.Timer.SECOND * 2, () => {

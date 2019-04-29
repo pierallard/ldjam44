@@ -33,7 +33,6 @@ export class Level3 extends Level {
         new Point(12, 9),
         new Point(7, 10),
         new Point(1, 11),
-        new Point(11, 13),
       ],
       new Point(9, 6) // playable coin
     );
@@ -47,9 +46,9 @@ export class Level3 extends Level {
     return "I don't feel so great...\n\nHow could I stop this?"
   }
 
-  getRemainingTime() {
-    return 32;
-  }
+  // getRemainingTime() {
+  //   return 32;
+  // }
 
   shouldGlitch() {
     return true;

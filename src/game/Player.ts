@@ -62,6 +62,7 @@ export class Player {
 
     if (coin) {
       this.kill(game, coin);
+      return 666;
     } else if (this.leftKey.isDown) {
       this.moveTo(game, level, this.position.left());
     } else if (this.rightKey.isDown) {

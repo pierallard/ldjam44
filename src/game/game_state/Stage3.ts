@@ -9,7 +9,7 @@ export default class Stage3 extends Stage {
 
   onGameWin() {
     SoundManager.setEvil(false);
-    this.game.state.start("Cedits");
+    this.game.state.start("Credits");
   }
 
   onGameOver() {

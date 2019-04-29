@@ -55,4 +55,8 @@ export class Timer {
     }
     return this.remainingTime <= 0;
   }
+
+  shouldGotoHunderMode() {
+    return this.remainingTime < 5;
+  }
 }

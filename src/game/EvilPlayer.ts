@@ -1,13 +1,13 @@
 import Sprite = Phaser.Sprite;
 import Point from "./Point";
 import { TILE_SIZE } from "../app";
-import { PlayableCoin } from "./PlayableCoin";
 import { Level } from "../levels/Level";
 import { js as EasyStar } from "easystarjs";
 import {Positionable} from "./Positionable";
 import {Coin} from "./Coin";
 import Game = Phaser.Game;
 import {SOUND, SoundManager} from "../SoundManager";
+import {PlayableCoin} from "./PlayableCoin";
 
 type Path = { x: number; y: number }[];
 
@@ -16,24 +16,27 @@ export class EvilPlayer implements Positionable {
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;
-  private target: PlayableCoin;
+  private target: Positionable;
   private shadow: Sprite;
   private coins: Coin[];
   private normalPlayerIsKilling: boolean = false;
   visible: boolean;
   canMove: boolean;
+  private playableCoin: PlayableCoin;
+  private hunterMode: boolean;
 
   private path: Path = null;
   private calculatingPath = false;
 
-  constructor(private pathfinder: EasyStar, target: PlayableCoin, position) {
+  constructor(private pathfinder: EasyStar, playableCoin: PlayableCoin, position) {
     this.position = position;
     this.isMoving = false;
-    this.target = target;
     this.visible = true;
+    this.playableCoin = playableCoin;
   }
 
   create(game: Phaser.Game, group: Phaser.Group) {
+    this.hunterMode = false;
     this.canMove = true;
     this.shadow = game.add.sprite(this.position.x * TILE_SIZE, this.position.y * TILE_SIZE, 'shadow');
     group.add(this.shadow);
@@ -64,6 +67,10 @@ export class EvilPlayer implements Positionable {
       return;
     }
 
+    if (!this.target || this.hunterMode) {
+      this.target = this.findNextTarget();
+    }
+
     const coin = this.canKill();
     if (coin) {
       this.kill(game, coin);
@@ -78,8 +85,8 @@ export class EvilPlayer implements Positionable {
       this.pathfinder.findPath(
         this.position.x,
         this.position.y,
-        this.target.position.x,
-        this.target.position.y,
+        this.target.getPosition().x,
+        this.target.getPosition().y,
         path => {
           this.calculatingPath = false;
           this.path = path;
@@ -93,20 +100,27 @@ export class EvilPlayer implements Positionable {
     }
 
     const destination = this.path.shift();
-    const point = new Point(destination.x, destination.y);
-    if (!point.equals(this.position)) {
-      this.moveTo(game, level, point);
+    if (destination) {
+      const point = new Point(destination.x, destination.y);
+      if (!point.equals(this.position)) {
+        this.moveTo(game, level, point);
+      }
+    } else {
+      this.playIdle();
     }
   }
 
   private isPathUpdateRequired = () => {
+    if (!this.target) {
+      return false;
+    }
     if (this.calculatingPath) {
       return false;
     }
     if (!this.path || this.path.length === 0) {
       return true;
     }
-    if (this.position.equals(this.target.position)) {
+    if (this.position.equals(this.target.getPosition())) {
       return true;
     }
 
@@ -186,6 +200,9 @@ export class EvilPlayer implements Positionable {
   private kill(game: Game, coin: Coin) {
     this.isMoving = true;
     this.playKill();
+    if (this.target === coin) {
+      this.target = null;
+    }
 
     SoundManager.play(SOUND.SWORD);
     SoundManager.play(SOUND.OTHER_COIN_DEATH);
@@ -203,6 +220,7 @@ export class EvilPlayer implements Positionable {
   }
 
   setPosition(point: Point) {
+    this.hunterMode = false;
     this.position = point;
     this.sprite.position.x = this.position.x * TILE_SIZE;
     this.sprite.position.y = this.position.y * TILE_SIZE;
@@ -237,5 +255,30 @@ export class EvilPlayer implements Positionable {
       this.sprite.alpha = 1;
       this.shadow.alpha = 1;
     }
+  }
+
+  private findNextTarget(): Positionable {
+    if (this.hunterMode) {
+      return this.playableCoin;
+    }
+
+    const aliveCoins = this.coins.filter((coin) => {
+      return coin.isAlive();
+    });
+    const closests = aliveCoins.sort((c1, c2) => {
+      return Coin.dist(this.position, c1.getPosition()) - Coin.dist(this.position, c2.getPosition());
+    });
+    if (closests.length) {
+      if (Coin.dist(this.position, this.playableCoin.getPosition()) < Coin.dist(this.position, closests[0].getPosition())) {
+        return this.playableCoin;
+      }
+      return closests[0];
+    }
+
+    return this.playableCoin;
+  }
+
+  setHunderMode(b: boolean) {
+    this.hunterMode = b;
   }
 }

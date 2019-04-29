@@ -23,7 +23,7 @@ export abstract class Stage extends Phaser.State {
   protected coins: Coin[] = [];
   protected playableCoin: PlayableCoin;
   protected evilPlayer: EvilPlayer;
-  protected isEvilMode: boolean = false;
+  protected isEvilMode: boolean = true;
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
   protected interfaceGroup: Phaser.Group;
@@ -113,6 +113,10 @@ export abstract class Stage extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
+    if (this.timer.shouldGotoHunderMode()) {
+      this.evilPlayer.setHunderMode(true);
+    }
+
     this.messageDisplayer.update(game);
     if (this.messageDisplayer.isVisible()) {
       return;

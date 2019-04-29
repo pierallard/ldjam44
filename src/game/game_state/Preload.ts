@@ -21,7 +21,7 @@ export default class Preload extends Phaser.State {
     this.graphics.drawRect(this.game.world.centerX - 74.5, this.game.world.centerY + 1.5, 148 * (progress / 100), 8);
 
     if (progress >= 100) {
-      this.game.state.start('Stage3');
+      this.game.state.start('Logo');
     }
   };
 

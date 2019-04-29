@@ -100,6 +100,12 @@ export class PlayableCoin {
     return false;
   }
 
+  playIdle() {
+    if (this.sprite.animations.currentAnim.name !== 'IDLE') {
+      this.sprite.animations.play('IDLE');
+    }
+  }
+
   private playerIsClose() {
     if (this.player instanceof EvilPlayer && !this.player.visible) {
       return false;

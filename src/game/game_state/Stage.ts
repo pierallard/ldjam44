@@ -148,6 +148,7 @@ export abstract class Stage extends Phaser.State {
 
       const winMessageDuration = 3 * Phaser.Timer.SECOND;
       const superGlitchDuration = 2 * Phaser.Timer.SECOND;
+      this.playableCoin.playIdle();
       this.messageDisplayer.displayBig(game, "You win!", winMessageDuration);
 
       // Little glitches
@@ -241,6 +242,7 @@ export abstract class Stage extends Phaser.State {
       this.playableCoin.stopSound();
       this.canInteract = false;
       this.evilPlayer.playIdle();
+      this.playableCoin.playIdle();
 
       const waitTime = Phaser.Timer.SECOND;
       const glitchDuration = Phaser.Timer.SECOND;
@@ -273,6 +275,7 @@ export abstract class Stage extends Phaser.State {
       if (this.stepCounter === 3) {
         this.evilPlayer.setVisible(true);
         this.canInteract = false;
+        this.playableCoin.playIdle();
         this.evilPlayer.canMove = false;
         const durationMEssage = this.showStageBegin(game);
         game.time.events.add(durationMEssage, () => {

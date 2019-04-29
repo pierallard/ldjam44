@@ -239,8 +239,29 @@ export abstract class Stage extends Phaser.State {
     if (this.timer.isOver()) {
       // WIN CONDITION FOR EVIL MODE
       this.playableCoin.stopSound();
-      this.onGameWin();
-      this.timer.setRemainingTime(this.level.getRemainingTime());
+      this.canInteract = false;
+      this.evilPlayer.playIdle();
+
+      const waitTime = Phaser.Timer.SECOND;
+      const glitchDuration = Phaser.Timer.SECOND;
+      const blackTime = Phaser.Timer.SECOND * 2;
+
+      game.time.events.add(waitTime, () => {
+        this.runSuperGlitch(game, glitchDuration);
+      });
+
+      game.time.events.add(waitTime + glitchDuration, () => {
+        [this.interfaceGroup, this.evilGroup, this.normalGroup].forEach((group) => {
+          game.add.tween(group).to({
+            alpha: 0
+          }, blackTime, Phaser.Easing.Default, true);
+        });
+      });
+
+      game.time.events.add(waitTime + glitchDuration + blackTime * 1.5, () => {
+        this.onGameWin();
+        this.canInteract = true;
+      });
 
       return;
     }

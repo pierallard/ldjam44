@@ -1,13 +1,29 @@
 export default class Preload extends Phaser.State {
-  public preload() {
+  private progress: Phaser.Text;
+  private graphics: Phaser.Graphics;
+
+  preload() {
+    this.progress = this.game.add.text(this.game.world.centerX, this.game.world.centerY-10, '0%', {fill: 'white', fontSize: 11, font: '11px Courier New'});
+    this.progress.anchor.setTo(.5,.5);
+    this.graphics = this.game.add.graphics();
+    this.graphics.lineStyle(1, 0x99e550);
+    this.graphics.drawRect(this.game.world.centerX - 75.5, this.game.world.centerY + 0.5, 150, 10);
+    this.game.load.onFileComplete.add(this.fileComplete, this);
+
     this.loadAudio();
     this.loadImages();
     this.loadFonts();
   }
 
-  public create() {
-    this.game.state.start('Stage1');
-  }
+  fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
+    this.progress.text = progress+"%";
+    this.graphics.beginFill(0x6abe30);
+    this.graphics.drawRect(this.game.world.centerX - 74.5, this.game.world.centerY + 1.5, 148 * (progress / 100), 8);
+
+    if (progress >= 100) {
+      this.game.state.start('Stage1');
+    }
+  };
 
   private loadAudio() {
     this.game.load.audio('music', 'dist/assets/musics/main_theme_chill.mp3');
@@ -48,7 +64,6 @@ export default class Preload extends Phaser.State {
     this.game.load.audio('sword_5', 'dist/assets/sfx/sword_5.mp3');
     this.game.load.audio('sword_6', 'dist/assets/sfx/sword_6.mp3');
   }
-
 
   private loadImages() {
     this.game.load.spritesheet('chips', 'dist/assets/images/chips.png', 12, 12);

@@ -54,6 +54,7 @@ export abstract class Stage extends Phaser.State {
     this.playableCoin.setPlayer(this.evilPlayer);
     this.player = new Player(this.level.getOriginalPlayerPosition());
     this.player.setEvilPlayer(this.evilPlayer);
+    this.evilPlayer.setNormalPlayer(this.player);
     this.coins = [];
     this.level.getCoinPositions().forEach((pos, i) => {
       this.coins.push(new Coin(i, pos, this.evilPlayer, this.coins));

@@ -8,6 +8,7 @@ import {Coin} from "./Coin";
 import Game = Phaser.Game;
 import {SOUND, SoundManager} from "../SoundManager";
 import {PlayableCoin} from "./PlayableCoin";
+import {Player} from "./Player";
 
 type Path = { x: number; y: number }[];
 
@@ -24,6 +25,7 @@ export class EvilPlayer implements Positionable {
   canMove: boolean;
   private playableCoin: PlayableCoin;
   private hunterMode: boolean;
+  private normalPlayer: Player;
 
   private path: Path = null;
   private calculatingPath = false;
@@ -131,11 +133,16 @@ export class EvilPlayer implements Positionable {
     return false;
   };
 
+  setNormalPlayer(player: Player) {
+    this.normalPlayer = player;
+  }
 
   moveTo(game: Phaser.Game, level: Level, position: Point, speed: number = null) {
     if (!this.isMovingAllowed(level, position)) {
       return;
     }
+
+    this.normalPlayer.moveTo(game, level, position, EvilPlayer.SPEED);
     this.isMoving = true;
     if (this.position.x < position.x) {
       this.sprite.scale.set(1, 1);
@@ -211,6 +218,8 @@ export class EvilPlayer implements Positionable {
     if (this.target === coin) {
       this.target = null;
     }
+
+    this.normalPlayer.playKill();
 
     game.camera.shake(0.005, 500);
 

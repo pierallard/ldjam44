@@ -82,8 +82,10 @@ export class Player {
     this.playableCoin = playableCoin;
   }
 
-  private moveTo(game: Phaser.Game, level: Level, position: Point) {
-    this.evilPlayer.moveTo(game, level, position, 0.3 * Phaser.Timer.SECOND);
+  moveTo(game: Phaser.Game, level: Level, position: Point, speed: number = undefined) {
+    if (speed === undefined) {
+      this.evilPlayer.moveTo(game, level, position, 0.3 * Phaser.Timer.SECOND);
+    }
     if (!this.isMovingAllowed(level, position)) {
       return;
     }
@@ -96,16 +98,19 @@ export class Player {
       this.sprite.anchor.set(0.7, 0.1);
     }
     this.sprite.animations.play('RUN');
+
+    const normalSpeed = 0.3 * Phaser.Timer.SECOND;
+
     game.add.tween(this.sprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+    }, speed || normalSpeed, Phaser.Easing.Default, true);
     game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, 0.3 * Phaser.Timer.SECOND, Phaser.Easing.Default, true);
+    }, speed || normalSpeed, Phaser.Easing.Default, true);
 
-    game.time.events.add(0.3 * Phaser.Timer.SECOND, () => {
+    game.time.events.add(speed || normalSpeed, () => {
       this.position = position;
       this.isMoving = false;
       this.sprite.position.x = this.position.x * TILE_SIZE;
@@ -179,5 +184,9 @@ export class Player {
   playLost()
   {
     this.sprite.animations.play('LOST');
+  }
+
+  playKill() {
+    this.sprite.animations.play('KILL');
   }
 }

@@ -205,6 +205,8 @@ export class EvilPlayer implements Positionable {
       this.target = null;
     }
 
+    game.camera.shake(0.005, 500);
+
     SoundManager.play(SOUND.SWORD);
     SoundManager.play(SOUND.OTHER_COIN_DEATH);
     game.time.events.add(0.7 * Phaser.Timer.SECOND, () => {

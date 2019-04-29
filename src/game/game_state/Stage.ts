@@ -6,11 +6,10 @@ import { CoinCounter } from "../CoinCounter";
 import { EvilPlayer } from "../EvilPlayer";
 import { PlayableCoin } from "../PlayableCoin";
 import { Player } from "../Player";
-import Point from "../Point";
 import { Game } from "phaser-ce";
 import {Timer} from "../Timer";
 import {MessageDisplayer} from "../MessageDisplayer";
-
+import {SoundManager} from "../../SoundManager";
 
 export abstract class Stage extends Phaser.State {
   static GLITCH_PROBA = 0.005;
@@ -33,8 +32,6 @@ export abstract class Stage extends Phaser.State {
   private level: Level;
   private timer: Timer;
   private messageDisplayer: MessageDisplayer;
-  private music: Phaser.Sound;
-  private evilMusic: Phaser.Sound;
   private canInteract: boolean;
   private firstStart: boolean;
   private stepCounter: number;
@@ -47,8 +44,7 @@ export abstract class Stage extends Phaser.State {
     const pathfinder = new EasyStar();
     pathfinder.setAcceptableTiles([0]);
     pathfinder.setGrid(this.level.getGrid());
-    this.firstStart = true; // TODO
-    //this.firstStart = false;
+    this.firstStart = true;
 
     this.playableCoin = new PlayableCoin(this.level.getOriginalPlayableCoinPosition());
     this.evilPlayer = new EvilPlayer(pathfinder, this.playableCoin, this.level.getOriginalPlayerPosition());
@@ -71,15 +67,9 @@ export abstract class Stage extends Phaser.State {
 
   public create(game: Phaser.Game) {
     this.canInteract = true;
-    if (!this.music) {
-        this.music = this.game.add.audio('music');
-        this.music.loop = true;
-        this.evilMusic = this.game.add.audio('evil_music');
-        this.evilMusic.volume = 0;
-        this.evilMusic.loop = true;
-        this.music.play();
-        this.evilMusic.play();
-    }
+
+    SoundManager.create(game);
+
     /** Create groups */
     this.evilGroup = game.add.group(null, "EVIL");
     this.normalGroup = game.add.group(null, "NORMAL");
@@ -267,13 +257,11 @@ export abstract class Stage extends Phaser.State {
     if (this.isGlitching) {
       return;
     }
+    this.switchToAmbiance(this.isEvilMode);
+
     if (this.isEvilMode) {
-      this.normalGroup.alpha = 0;
-      this.evilGroup.alpha = 1;
       this.playableCoin.followCamera(game);
     } else {
-      this.normalGroup.alpha = 1;
-      this.evilGroup.alpha = 0;
       this.player.followCamera(game);
     }
   }
@@ -292,37 +280,29 @@ export abstract class Stage extends Phaser.State {
 
   private glitch(game: Phaser.Game, unglichRandom: boolean = true, time = Math.random() * Stage.GLITCH_SECONDS * Phaser.Timer.SECOND) {
     this.isGlitching = !this.isGlitching;
-    if (this.normalGroup.alpha === 0) {
-      this.normalGroup.alpha = 1;
-      this.evilGroup.alpha = 0;
-
-      this.music.volume = 1;
-      this.evilMusic.volume = 0;
-    } else {
-      this.normalGroup.alpha = 0;
-      this.evilGroup.alpha = 1;
-
-      this.music.volume = 0;
-      this.evilMusic.volume = 1;
-    }
+    this.switchToAmbiance(this.normalGroup.alpha !== 0);
 
     if (unglichRandom) {
       game.time.events.add(time, () => {
         this.isGlitching = !this.isGlitching;
-        if (this.isEvilMode) {
-          this.normalGroup.alpha = 0;
-          this.evilGroup.alpha = 1;
-
-          this.music.volume = 0;
-          this.evilMusic.volume = 1;
-        } else {
-          this.normalGroup.alpha = 1;
-          this.evilGroup.alpha = 0;
-
-          this.music.volume = 1;
-          this.evilMusic.volume = 0;
-        }
+        this.switchToAmbiance(this.isEvilMode);
       }, this)
+    }
+  }
+
+  private switchToAmbiance(evilMode: boolean) {
+    if (evilMode) {
+      this.normalGroup.alpha = 0;
+      this.evilGroup.alpha = 1;
+
+      SoundManager.changeMusicVolume(0);
+      SoundManager.changeEvilMusicVolume(1);
+    } else {
+      this.normalGroup.alpha = 1;
+      this.evilGroup.alpha = 0;
+
+      SoundManager.changeMusicVolume(1);
+      SoundManager.changeEvilMusicVolume(0);
     }
   }
 

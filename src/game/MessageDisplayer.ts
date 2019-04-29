@@ -34,9 +34,6 @@ export class MessageDisplayer {
   }
 
   update(game: Phaser.Game) {
-    if (game.input.keyboard.addKey(Phaser.Keyboard.ENTER).justDown) {
-      this.setVisible(false);
-    }
   }
 
   displayBig(game, text, duration) {

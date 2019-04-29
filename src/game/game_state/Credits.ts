@@ -40,6 +40,10 @@ export class Credits extends State {
   create(game: Game) {
     this.camera.unfollow();
     this.camera.setPosition(0, 0);
+    const image = game.add.image(0, 0, 'logo');
+    image.scale.set(1.3);
+    image.alpha = 0.2;
+
     this.phaserTexts = [];
     this.texts.forEach((text, i) => {
       const t = game.add.bitmapText(0, i * 10 + this.game.height / 2 - 30, "Carrier Command", text, i === 0 ? 10 : 5);

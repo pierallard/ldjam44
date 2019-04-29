@@ -157,12 +157,12 @@ export class EvilPlayer implements Positionable {
     game.add.tween(this.sprite).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, speed || EvilPlayer.SPEED, Phaser.Easing.Default, true);
+    }, (speed || EvilPlayer.SPEED) - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
 
     game.add.tween(this.shadow).to({
       x: position.x * TILE_SIZE,
       y: position.y * TILE_SIZE
-    }, speed || EvilPlayer.SPEED, Phaser.Easing.Default, true);
+    }, (speed || EvilPlayer.SPEED) - Phaser.Timer.SECOND / 50, Phaser.Easing.Default, true);
 
     game.time.events.add(speed || EvilPlayer.SPEED, () => {
       this.position = position;

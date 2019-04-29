@@ -238,6 +238,7 @@ export abstract class Stage extends Phaser.State {
       this.playableCoin.stopSound();
       this.canInteract = false;
       this.evilPlayer.playKill();
+      this.playableCoin.disappear();
 
       SoundManager.play(SOUND.SWORD);
       SoundManager.play(SOUND.EVIL_COIN_DEATH);
@@ -257,6 +258,8 @@ export abstract class Stage extends Phaser.State {
         this.timer.setRemainingTime(this.level.getRemainingTime());
         this.evilPlayer.setHunderMode(false);
         this.canInteract = true;
+        this.playableCoin.appear();
+        this.evilPlayer.setPosition(this.level.getOriginalPlayerPosition());
       });
 
       return;

@@ -194,4 +194,12 @@ export class PlayableCoin {
   stopSound() {
     this.runSound.volume = 0;
   }
+
+  disappear() {
+    this.sprite.alpha = 0;
+  }
+
+  appear() {
+    this.sprite.alpha = 1;
+  }
 }

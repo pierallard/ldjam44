@@ -24,14 +24,11 @@ export class Level1 extends Level {
         new Point(7, 4),
         new Point(9, 5),
         new Point(1, 6),
-        new Point(5, 1),
-        new Point(4, 1),
-        new Point(6, 1),
         new Point(1, 8),
         new Point(10, 8),
         new Point(6, 10),
       ],
-      new Point(9, 1) // playable coin
+      new Point(10, 1) // playable coin
     );
   }
 

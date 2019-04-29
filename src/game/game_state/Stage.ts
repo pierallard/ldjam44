@@ -10,6 +10,7 @@ import { Game } from "phaser-ce";
 import {Timer} from "../Timer";
 import {MessageDisplayer} from "../MessageDisplayer";
 import {SOUND, SoundManager} from "../../SoundManager";
+import {Level3} from "../../levels/Level3";
 
 export abstract class Stage extends Phaser.State {
   static GLITCH_PROBA = 0.005;
@@ -210,7 +211,16 @@ export abstract class Stage extends Phaser.State {
       return;
     }
 
-    this.player.update(game, this.level);
+    const isKilling = this.player.update(game, this.level);
+    if (isKilling === 666 && this.level instanceof Level3) {
+      this.glitch(game, true, 0.7 * Phaser.Timer.SECOND);
+      SoundManager.play(SOUND.SWORD);
+      SoundManager.play(SOUND.OTHER_COIN_DEATH);
+      game.time.events.add(0.7 * Phaser.Timer.SECOND, () => {
+        SoundManager.play(SOUND.SWORD);
+        SoundManager.play(SOUND.OTHER_COIN_DEATH);
+      }, this);
+    }
     this.coins.forEach(coin => coin.update(game, this.level));
   };
 

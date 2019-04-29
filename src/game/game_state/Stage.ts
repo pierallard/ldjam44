@@ -13,8 +13,9 @@ import {SOUND, SoundManager} from "../../SoundManager";
 import {Level3} from "../../levels/Level3";
 
 export abstract class Stage extends Phaser.State {
-  static GLITCH_PROBA = 0.005;
-  static GLITCH_SECONDS = 0.04;
+  static GLITCH_PROBA = 0.02;
+  static GLITCH_SECONDS = 0.05;
+  static LONG_GLITCH_SECONDS = 0.8;
 
   static scenarioDurationMessage = 4 * Phaser.Timer.SECOND;
   static stageMessageDuration = Phaser.Timer.SECOND * 2;
@@ -125,7 +126,12 @@ export abstract class Stage extends Phaser.State {
     }
 
     if (this.level.shouldGlitch() && Math.random() < Stage.GLITCH_PROBA && !this.isGlitching) {
-      this.glitch(game);
+      let time = Math.random() * Stage.GLITCH_SECONDS * Phaser.Timer.SECOND;
+      if (Math.random() < 0.15) {
+        // Long glitch
+        time = (Stage.LONG_GLITCH_SECONDS / 2 + Math.random() * Stage.LONG_GLITCH_SECONDS / 2) * Phaser.Timer.SECOND;
+      }
+      this.glitch(game, true, time);
     }
 
     if (this.isEvilMode) {

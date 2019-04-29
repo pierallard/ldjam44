@@ -22,7 +22,6 @@ export default class Preload extends Phaser.State {
 
     if (progress >= 100) {
       this.game.state.start('Stage1');
-      //this.game.state.start('Credits');
     }
   };
 

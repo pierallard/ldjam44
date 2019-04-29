@@ -154,9 +154,9 @@ export abstract class Stage extends Phaser.State {
           if (this.isGlitching) { return; }
           const time = Math.random() * 0.3 * Phaser.Timer.SECOND;
           this.glitch(game, true, time);
-          this.messageDisplayer.setText('You lost!');
+          this.messageDisplayer.setBigText('You lost!');
           this.game.time.events.add(time, () => {
-            this.messageDisplayer.setText('You win!');
+            this.messageDisplayer.setBigText('You win!');
           })
         }, this);
       }

@@ -331,11 +331,13 @@ export abstract class Stage extends Phaser.State {
       this.evilGroup.alpha = 1;
 
       SoundManager.setEvil(true);
+      this.coinCounter.setEvil();
     } else {
       this.normalGroup.alpha = 1;
       this.evilGroup.alpha = 0;
 
       SoundManager.setEvil(false);
+      this.coinCounter.setGood();
     }
   }
 

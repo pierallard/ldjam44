@@ -47,6 +47,10 @@ export class Level3 extends Level {
     return "I don't feel so great...\n\nHow could I stop this?"
   }
 
+  getRemainingTime() {
+    return 32;
+  }
+
   shouldGlitch() {
     return true;
   }

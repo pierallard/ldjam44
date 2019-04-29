@@ -142,7 +142,9 @@ export class EvilPlayer implements Positionable {
       return;
     }
 
-    this.normalPlayer.moveTo(game, level, position, EvilPlayer.SPEED);
+    if (speed === null) {
+      this.normalPlayer.moveTo(game, level, position, EvilPlayer.SPEED);
+    }
     this.isMoving = true;
     if (this.position.x < position.x) {
       this.sprite.scale.set(1, 1);

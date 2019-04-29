@@ -35,6 +35,10 @@ export class Level1 extends Level {
     return '1';
   }
 
+  getRemainingTime() {
+    return 27;
+  }
+
   getNormalMessage() {
     return "Life is cool for a naked amazon.\n\nTypical daily currency hunt!"
   }

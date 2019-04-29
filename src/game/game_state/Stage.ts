@@ -25,7 +25,7 @@ export abstract class Stage extends Phaser.State {
   protected coins: Coin[] = [];
   protected playableCoin: PlayableCoin;
   protected evilPlayer: EvilPlayer;
-  protected isEvilMode: boolean = true;
+  protected isEvilMode: boolean = false;
   protected normalGroup: Phaser.Group;
   protected evilGroup: Phaser.Group;
   protected interfaceGroup: Phaser.Group;
@@ -37,6 +37,7 @@ export abstract class Stage extends Phaser.State {
   private canInteract: boolean;
   private firstStart: boolean;
   private stepCounter: number;
+  private shouldSwitchFollow: boolean = false;
 
   constructor(level: Level) {
     super();
@@ -70,6 +71,7 @@ export abstract class Stage extends Phaser.State {
 
   public create(game: Phaser.Game) {
     this.canInteract = true;
+    SoundManager.create(game);
 
     /** Create groups */
     this.evilGroup = game.add.group(null, "EVIL");
@@ -268,6 +270,7 @@ export abstract class Stage extends Phaser.State {
 
       if (this.level instanceof Level3)
       {
+        this.shouldSwitchFollow = true;
         this.playableCoin.unfollowCamera(game);
         this.evilPlayer.followCamera(game);
 
@@ -349,6 +352,8 @@ export abstract class Stage extends Phaser.State {
       return;
     }
     this.switchToAmbiance(this.isEvilMode);
+
+    if (this.shouldSwitchFollow) return;
 
     if (this.isEvilMode) {
       this.playableCoin.followCamera(game);

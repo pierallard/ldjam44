@@ -202,7 +202,7 @@ export class EvilPlayer implements Positionable {
   }
 
   followCamera(game: Phaser.Game) {
-    game.camera.follow(this.sprite);
+    game.camera.follow(this.sprite, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
   }
 
   private kill(game: Game, coin: Coin) {

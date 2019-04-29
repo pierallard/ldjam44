@@ -196,6 +196,7 @@ export abstract class Stage extends Phaser.State {
       this.evilPlayer.setHunderMode(false);
       this.playableCoin.stopSound();
       this.timer.setRemainingTime(this.level.getRemainingTime());
+      this.player.playIdle();
 
       const messageLostDuration = 5 * Phaser.Timer.SECOND;
       this.messageDisplayer.display(game, "Argh, I have to improve my\n\nskills to catch these coins\n\nfaster!", messageLostDuration);
@@ -227,7 +228,6 @@ export abstract class Stage extends Phaser.State {
   updateEvilMode = (game: Game) => {
     if (this.evilPlayer.getPosition().equals(this.playableCoin.position)) {
       // LOST CONDITION FOR EVIL MODE
-      this.evilPlayer.setHunderMode(false);
       this.playableCoin.stopSound();
       this.canInteract = false;
       this.evilPlayer.playKill();
@@ -248,6 +248,7 @@ export abstract class Stage extends Phaser.State {
       game.time.events.add(glitchDuration + killAnimationTime, () => {
         this.onGameOver();
         this.timer.setRemainingTime(this.level.getRemainingTime());
+        this.evilPlayer.setHunderMode(false);
         this.canInteract = true;
       });
 

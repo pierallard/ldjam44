@@ -170,4 +170,8 @@ export class Player {
   setEvilPlayer(evilPlayer: EvilPlayer) {
     this.evilPlayer = evilPlayer;
   }
+
+  playIdle() {
+    this.sprite.animations.play('IDLE');
+  }
 }

@@ -281,5 +281,8 @@ export class EvilPlayer implements Positionable {
 
   setHunderMode(b: boolean) {
     this.hunterMode = b;
+    if (!this.hunterMode && this.target instanceof PlayableCoin) {
+      this.target = null;
+    }
   }
 }

@@ -202,7 +202,7 @@ export abstract class Stage extends Phaser.State {
       this.evilPlayer.setHunderMode(false);
       this.playableCoin.stopSound();
       this.timer.setRemainingTime(this.level.getRemainingTime());
-      this.player.playIdle();
+      this.player.playLost();
 
       const messageLostDuration = 5 * Phaser.Timer.SECOND;
       this.messageDisplayer.display(game, "Argh, I have to improve my\n\nskills to catch these coins\n\nfaster!", messageLostDuration);

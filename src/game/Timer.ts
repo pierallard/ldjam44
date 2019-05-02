@@ -6,12 +6,14 @@ export class Timer {
   private text: BitmapText;
   private remainingTime: number;
   private sprite: Sprite;
+  private isClignoting: boolean;
+  private switch: boolean = true;
 
   public static dist = new Point(7, 14);
   public static dep = new Point(9, 5);
 
   create(game: Phaser.Game, interfaceGroup: Phaser.Group) {
-
+    this.isClignoting = false;
     this.sprite = game.add.sprite(Timer.dep.x, Timer.dep.y, 'watch', 0);
     this.sprite.fixedToCamera = true;
     this.sprite.alpha = 0;
@@ -27,7 +29,20 @@ export class Timer {
     }, this);
   }
 
-  update() {
+  update(game: Phaser.Game) {
+    if (this.isClignoting) {
+      if (this.switch) {
+        this.sprite.alpha = this.sprite.alpha ? 0 : 1;
+        this.text.alpha = this.text.alpha ? 0 : 1;
+
+        this.switch = false;
+        game.time.events.add(0.2 * Phaser.Timer.SECOND, () => {
+          this.switch = true;
+        });
+      }
+      return;
+    }
+
     if (this.remainingTime === null) {
       this.text.setText('');
       this.sprite.alpha = 0;
@@ -70,5 +85,13 @@ export class Timer {
     } else {
       this.text.fontSize = 5;
     }
+  }
+
+  clignote() {
+    this.isClignoting = true;
+  }
+
+  StopClignote() {
+    this.isClignoting = false;
   }
 }

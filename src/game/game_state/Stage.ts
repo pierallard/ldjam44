@@ -116,6 +116,7 @@ export abstract class Stage extends Phaser.State {
   }
 
   public update(game: Phaser.Game) {
+    this.timer.update(game);
     this.evilPlayer.setHunderMode(this.timer.shouldGotoHunderMode());
 
     this.messageDisplayer.update(game);
@@ -143,7 +144,7 @@ export abstract class Stage extends Phaser.State {
     this.refreshGroups(game);
 
     this.coinCounter.update();
-    this.timer.update();
+
   }
 
   updateGoodMode = (game: Game) => {
@@ -410,9 +411,11 @@ export abstract class Stage extends Phaser.State {
     this.canInteract = false;
     this.messageDisplayer.display(game, this.level.getNormalMessage(), Stage.scenarioDurationMessage);
     this.game.time.events.add(Stage.scenarioDurationMessage + Stage.betweenDuration, () => {
+      this.timer.clignote();
       this.messageDisplayer.displayBig(game, "Stage " + this.level.getStageNumber() + "/3", Stage.stageMessageDuration);
     });
     this.game.time.events.add(Stage.stageMessageDuration + Stage.scenarioDurationMessage + Stage.betweenDuration, () => {
+      this.timer.StopClignote();
       this.canInteract = true;
     });
     return (Stage.scenarioDurationMessage + Stage.stageMessageDuration + Stage.betweenDuration);

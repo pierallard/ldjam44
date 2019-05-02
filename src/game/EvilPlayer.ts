@@ -13,7 +13,7 @@ import {Player} from "./Player";
 type Path = { x: number; y: number }[];
 
 export class EvilPlayer implements Positionable {
-  private static SPEED = 0.22 * Phaser.Timer.SECOND;
+  private static SPEED = 0.24 * Phaser.Timer.SECOND;
   private sprite: Sprite;
   private position: Point;
   private isMoving: boolean;

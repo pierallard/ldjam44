@@ -13,6 +13,12 @@ export class PlayableCoin {
   private rightKey: Phaser.Key;
   private upKey: Phaser.Key;
   private downKey: Phaser.Key;
+  private wKey: Phaser.Key;
+  private aKey: Phaser.Key;
+  private sKey: Phaser.Key;
+  private dKey: Phaser.Key;
+  private zKey: Phaser.Key;
+  private qKey: Phaser.Key;
   private isMoving: boolean;
   private shadow: Sprite;
   private normalSprite: Sprite;
@@ -54,6 +60,12 @@ export class PlayableCoin {
     this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
     this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    this.wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+    this.zKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+    this.qKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
   }
 
   followCamera(game: Phaser.Game) {
@@ -84,16 +96,16 @@ export class PlayableCoin {
       }
     }
 
-    if (this.leftKey.isDown) {
+    if (this.leftKey.isDown || this.qKey.isDown || this.aKey.isDown) {
       this.moveTo(game, this.position.left(), level);
       return true;
-    } else if (this.rightKey.isDown) {
+    } else if (this.rightKey.isDown || this.dKey.isDown) {
       this.moveTo(game, this.position.right(), level);
       return true;
-    } else if (this.upKey.isDown) {
+    } else if (this.upKey.isDown || this.zKey.isDown || this.wKey.isDown) {
       this.moveTo(game, this.position.up(), level);
       return true;
-    } else if (this.downKey.isDown) {
+    } else if (this.downKey.isDown || this.sKey.isDown) {
       this.moveTo(game, this.position.down(), level);
       return true;
     } else {

@@ -86,10 +86,11 @@ export default class Preload extends Phaser.State {
     this.game.load.spritesheet('evil_coin', 'dist/assets/images/evil_coin.png', 60, 60);
     this.game.load.image('shadow', 'dist/assets/images/shadow.png');
     this.game.load.image('logo', 'dist/assets/images/logo1.png');
+    this.game.load.spritesheet('watch', 'dist/assets/images/watch.png', 24, 29);
   }
 
   private loadFonts() {
-    this.game.load.bitmapFont('font', 'dist/assets/fonts/font.png', 'dist/assets/fonts/font.xml');
     this.game.load.bitmapFont('Carrier Command', 'dist/assets/fonts/carrier_command.png', 'dist/assets/fonts/carrier_command.xml');
+    this.game.load.bitmapFont('Carrier Command Red', 'dist/assets/fonts/carrier_command_red.png', 'dist/assets/fonts/carrier_command_red.xml');
   }
 }

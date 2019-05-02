@@ -1,26 +1,24 @@
 import BitmapText = Phaser.BitmapText;
+import Sprite = Phaser.Sprite;
+import Point from "./Point";
 
 export class Timer {
-  private textBlock: Phaser.Graphics;
   private text: BitmapText;
   private remainingTime: number;
+  private sprite: Sprite;
+
+  public static dist = new Point(7, 14);
+  public static dep = new Point(9, 5);
 
   create(game: Phaser.Game, interfaceGroup: Phaser.Group) {
-    this.textBlock = game.add.graphics(0, 0);
-    this.textBlock.beginFill(0x000000, 0.5);
-    this.textBlock.drawRect(
-      game.width - 105,
-      game.height - 15,
-      game.width - 140,
-      15
-    );
-    this.textBlock.fixedToCamera = true;
-    this.textBlock.alpha = 0;
-    interfaceGroup.add(this.textBlock);
 
-    this.text = game.add.bitmapText(game.width - 100, game.height - 10, "Carrier Command", "", 5, interfaceGroup);
+    this.sprite = game.add.sprite(Timer.dep.x, Timer.dep.y, 'watch', 0);
+    this.sprite.fixedToCamera = true;
+    this.sprite.alpha = 0;
+    interfaceGroup.add(this.sprite);
+
+    this.text = game.add.bitmapText(Timer.dep.x + Timer.dist.x, Timer.dep.y + Timer.dist.y, "Carrier Command Red", "", 5, interfaceGroup);
     this.text.fixedToCamera = true;
-    this.text.align = 'center';
 
     game.time.events.loop(Phaser.Timer.SECOND, () => {
       if (this.remainingTime !== null) {
@@ -30,18 +28,19 @@ export class Timer {
   }
 
   update() {
-    this.textBlock.alpha = 1;
-
     if (this.remainingTime === null) {
       this.text.setText('');
+      this.sprite.alpha = 0;
     } else {
+      this.sprite.alpha = 1;
       let remainingSeconds = Math.ceil(Math.max(0, this.remainingTime));
+      this.updateSprite();
       let timebar = '';
       for (let _i = 0; _i < remainingSeconds; _i++) {
         timebar += '|';
       }
 
-      this.text.setText("Time: " + remainingSeconds + " seconds");
+      this.text.setText(remainingSeconds + '');
     }
   }
 
@@ -58,5 +57,18 @@ export class Timer {
 
   shouldGotoHunderMode() {
     return this.remainingTime < 18 && this.remainingTime > 0.5;
+  }
+
+  private updateSprite() {
+    const toto = - this.remainingTime + 35;
+    const toto2 = toto * 3 / 5;
+
+    this.sprite.loadTexture('watch', Math.round(Math.min(Math.max(0, toto2), 19)));
+
+    if (this.remainingTime <= 9) {
+      this.text.fontSize = 10;
+    } else {
+      this.text.fontSize = 5;
+    }
   }
 }
